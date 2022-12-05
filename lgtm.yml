@@ -1,6 +1,0 @@
-extraction:
-  csharp:
-     index:
-        dotnet:
-           arguments: --configuration Release
-           version: 5.0.100

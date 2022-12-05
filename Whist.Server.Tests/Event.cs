@@ -2,9 +2,9 @@
 {
     internal class Event
     {
-        public string Sender;
+        public readonly string Sender;
 
-        public string Message;
+        public readonly string Message;
 
         public Event(string sender, string message)
         {

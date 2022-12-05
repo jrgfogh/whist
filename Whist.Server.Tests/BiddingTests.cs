@@ -14,7 +14,7 @@ namespace Whist.Server.Tests
         private HubConnection _connectionD;
 
         [OneTimeSetUp]
-        public void OneTimeSetup()
+        public async Task OneTimeSetup()
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
             Environment.CurrentDirectory = ServerPath();
@@ -25,7 +25,7 @@ namespace Whist.Server.Tests
                     webBuilder.UseUrls("http://localhost:5000");
                 })
                 .Build();
-            _ = Task.Factory.StartNew(host.Run);
+            await host.StartAsync();
         }
 
         private static string ServerPath() =>

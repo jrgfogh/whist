@@ -21,6 +21,7 @@ namespace Whist.Server.Tests
             var host = Program.CreateHostBuilder(null)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseKestrel();
                     webBuilder.UseUrls("http://localhost:5000");
                 })
                 .Build();

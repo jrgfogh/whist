@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29911.84
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whist.Rules", "Whist.Rules\Whist.Rules.csproj", "{E95455E1-36DC-4E08-9177-5C5A875F8035}"
 EndProject
@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whist.Rules.Tests", "Whist.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whist.Console", "Whist.Console\Whist.Console.csproj", "{998E8651-AE9B-4D02-81C0-10358B010EEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Whist.Server", "Whist.Server\Whist.Server.csproj", "{74CE0DD9-B920-4E49-A09D-A6F23B0D57F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whist.Server", "Whist.Server\Whist.Server.csproj", "{74CE0DD9-B920-4E49-A09D-A6F23B0D57F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Whist.Server.Tests", "Whist.Server.Tests\Whist.Server.Tests.csproj", "{DEED5478-5A15-47E8-B0DD-65D704B80D78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{74CE0DD9-B920-4E49-A09D-A6F23B0D57F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74CE0DD9-B920-4E49-A09D-A6F23B0D57F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74CE0DD9-B920-4E49-A09D-A6F23B0D57F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEED5478-5A15-47E8-B0DD-65D704B80D78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEED5478-5A15-47E8-B0DD-65D704B80D78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEED5478-5A15-47E8-B0DD-65D704B80D78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEED5478-5A15-47E8-B0DD-65D704B80D78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

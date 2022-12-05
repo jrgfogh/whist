@@ -1,6 +1,6 @@
 # whist
 [![Build Status](https://dev.azure.com/jrgfogh/jrgfogh-whist/_apis/build/status/jrgfogh.whist?branchName=master)](https://dev.azure.com/jrgfogh/jrgfogh-whist/_build/latest?definitionId=1&branchName=master)
-[![LGTM Alerts](https://img.shields.io/lgtm/alerts/github/jrgfogh/whist)](https://lgtm.com/projects/g/jrgfogh/whist/alerts/)
+[![CodeQL](https://github.com/jrgfogh/whist/actions/workflows/codeql.yml/badge.svg)](https://github.com/jrgfogh/whist/actions/workflows/codeql.yml)
 
 ***NOTE: The game is not finished and not even playable at the moment.***
 

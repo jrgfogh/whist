@@ -14,8 +14,8 @@ namespace Whist.Server.Tests
                 _connectionB.SendAsync("SelectTable", "Table"),
                 _connectionC.SendAsync("SelectTable", "Table"),
                 _connectionD.SendAsync("SelectTable", "Table"));
-            var (playerName, gameEvent) = _receivedEvents.Take();
-            Assert.Pass();
+            var gameEvent = _receivedEvents.Take();
+            Assert.That(gameEvent.Message, Is.EqualTo("PromptForBid"));
         }
     }
 }

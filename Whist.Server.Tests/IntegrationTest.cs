@@ -12,7 +12,7 @@ namespace Whist.Server.Tests
         protected abstract string TestUrl { get; }
 
         // TODO(jrgfogh): Use System.Threading.Channels instead?
-        protected readonly BlockingCollection<(string, Event)> _receivedEvents = new();
+        protected readonly BlockingCollection<Event> _receivedEvents = new();
         protected GameConductorService _conductorService;
         protected HubConnection _connectionA;
         protected HubConnection _connectionB;
@@ -67,22 +67,19 @@ namespace Whist.Server.Tests
 
             void HandleEvent(string methodName) =>
                 connection.On(methodName, () =>
-                    _receivedEvents.Add((playerName, new Event("To " + playerName, ""))));
+                    _receivedEvents.Add(new Event("To " + playerName, methodName)));
 
+            // TODO(jrgfogh): Deal with parameters:
             HandleEvent("PromptForBid");
             HandleEvent("PromptForTrump");
             HandleEvent("PromptForBuddyAce");
             HandleEvent("UpdatePlayersAtTable");
             HandleEvent("UpdateListOfTables");
-
-            connection.On("ReceiveDealtCards", (List<string> cards) =>
-                _receivedEvents.Add((playerName, new Event("To " + playerName, ""))));
-            connection.On("ReceiveBid", (string user, string bid) =>
-                _receivedEvents.Add((playerName, new Event("To " + playerName, ""))));
-            connection.On("ReceiveTrump", (string trump) =>
-                _receivedEvents.Add((playerName, new Event("To " + playerName, ""))));
-            connection.On("ReceiveBuddyAce", (string buddyAce) =>
-                _receivedEvents.Add((playerName, new Event("To " + playerName, ""))));
+            
+            HandleEvent("ReceiveDealtCards");
+            HandleEvent("ReceiveBid");
+            HandleEvent("ReceiveTrump");
+            HandleEvent("ReceiveBuddyAce");
             await connection.StartAsync().ConfigureAwait(false);
             return connection;
         }

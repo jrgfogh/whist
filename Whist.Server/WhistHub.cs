@@ -54,7 +54,7 @@ namespace Whist.Server
             // TODO(jrgfogh): Validate the table name!
             await this.Groups.AddToGroupAsync(this.Context.ConnectionId, table);
             ConnectionIdsAtTable[table].Add(this.Context.ConnectionId);
-            if (ConnectionIdsAtTable.Count == 4)
+            if (ConnectionIdsAtTable[table].Count == 4)
                 this._gameConductorService.StartGame(ConnectionIdsAtTable[table]);
             await this.Clients.Group(table).UpdatePlayersAtTable(ConnectionIdsAtTable[table]);
         }

@@ -12,12 +12,12 @@ namespace Whist.Server.Tests
         protected abstract string TestUrl { get; }
 
         // TODO(jrgfogh): Use System.Threading.Channels instead?
-        private readonly BlockingCollection<(string, Event)> _receivedEvents = new();
-        private GameConductorService _conductorService;
-        private HubConnection _connectionA;
-        private HubConnection _connectionB;
-        private HubConnection _connectionC;
-        private HubConnection _connectionD;
+        protected readonly BlockingCollection<(string, Event)> _receivedEvents = new();
+        protected GameConductorService _conductorService;
+        protected HubConnection _connectionA;
+        protected HubConnection _connectionB;
+        protected HubConnection _connectionC;
+        protected HubConnection _connectionD;
 
         private static Event ParseEvent(string line)
         {

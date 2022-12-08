@@ -2,6 +2,7 @@ namespace Whist.Server
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.SignalR;
 
@@ -9,9 +10,11 @@ namespace Whist.Server
     {
         private readonly GameConductorService _gameConductorService;
 
+        private readonly object syncLock = new object();
+
         // TODO(jrgfogh): Make the table name dynamic.
         private const string TableName = "Table";
-        // TODO(jrgfogh): This only works, when there is only a single instance of WhistHub:
+        // TODO(jrgfogh): This only works, when there is only a single single server process:
         private static readonly Dictionary<string, List<string>> ConnectionIdsAtTable = new()
         {
             { TableName, new List<string>() }
@@ -44,8 +47,13 @@ namespace Whist.Server
         {
             await this.Groups.RemoveFromGroupAsync(this.Context.ConnectionId, TableName);
             // TODO(jrgfogh): Only remove the player if the player is at the table:
-            ConnectionIdsAtTable[TableName].Remove(this.Context.ConnectionId);
-            await this.Clients.Group(TableName).UpdatePlayersAtTable(ConnectionIdsAtTable[TableName]);
+            List<string> connectionIds;
+            lock (syncLock)
+            {
+                ConnectionIdsAtTable[TableName].Remove(this.Context.ConnectionId);
+                connectionIds = new (ConnectionIdsAtTable[TableName]);
+            }
+            await this.Clients.Group(TableName).UpdatePlayersAtTable(connectionIds);
             await base.OnDisconnectedAsync(exception);
         }
 
@@ -53,10 +61,16 @@ namespace Whist.Server
         {
             // TODO(jrgfogh): Validate the table name!
             await this.Groups.AddToGroupAsync(this.Context.ConnectionId, table);
-            ConnectionIdsAtTable[table].Add(this.Context.ConnectionId);
-            if (ConnectionIdsAtTable[table].Count == 4)
-                this._gameConductorService.StartGame(ConnectionIdsAtTable[table]);
-            await this.Clients.Group(table).UpdatePlayersAtTable(ConnectionIdsAtTable[table]);
+            List<string> connectionIds;
+            lock (syncLock)
+            {
+                ConnectionIdsAtTable[table].Add(this.Context.ConnectionId);
+                connectionIds = new (ConnectionIdsAtTable[table]);
+            }
+            if (connectionIds.Count == 4)
+                this._gameConductorService.StartGame(connectionIds);
+            // TODO(jrgfogh): Don't send a list, just send an event saying who joined.
+            await this.Clients.Group(table).UpdatePlayersAtTable(connectionIds);
         }
 
         public async Task SaveTableName(string key, string text)

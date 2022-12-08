@@ -8,6 +8,8 @@ namespace Whist.Server.Tests
 {
     public class LobbyTests : IntegrationTest
     {
+        protected override string TestUrl { get; } = "http://localhost:5001";
+
         [Test]
         public async Task LobbyTest()
         {

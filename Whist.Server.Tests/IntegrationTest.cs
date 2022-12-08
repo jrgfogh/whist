@@ -6,9 +6,11 @@ using System.Collections.Concurrent;
 
 namespace Whist.Server.Tests
 {
-    public class IntegrationTest
+    public abstract class IntegrationTest
     {
-        private const string TestUrl = "http://localhost:5000";
+        // The different tests can't bind to the same port:
+        protected abstract string TestUrl { get; }
+
         // TODO(jrgfogh): Use System.Threading.Channels instead?
         private readonly BlockingCollection<(string, Event)> _receivedEvents = new();
         private GameConductorService _conductorService;

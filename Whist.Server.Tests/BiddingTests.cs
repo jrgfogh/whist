@@ -9,6 +9,8 @@ namespace Whist.Server.Tests
 {
     public class BiddingTests : IntegrationTest
     {
+        protected override string TestUrl { get; } = "http://localhost:5000";
+
         [Test]
         [TestCase(
 @"To All: Bidding Round

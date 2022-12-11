@@ -17,7 +17,7 @@ stages:
       inputs:
         command: test
         projects: '**/*Tests/*.csproj'
-        arguments: '--configuration $(buildConfiguration)' '--blame-hang-timeout 1m'
+        arguments: '--configuration $(buildConfiguration) --blame-hang-timeout 1m'
       displayName: 'Run tests'
     - task: DotNetCoreCLI@2
       displayName: Bundle as .zip

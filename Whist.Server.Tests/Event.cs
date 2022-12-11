@@ -11,5 +11,17 @@
             Sender = sender;
             Message = message;
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Event @event &&
+                   Sender == @event.Sender &&
+                   Message == @event.Message;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Sender, Message);
+        }
     }
 }

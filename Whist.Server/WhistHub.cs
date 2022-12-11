@@ -28,10 +28,11 @@ namespace Whist.Server
                 ConnectionIdsAtTable.Add(this.Context.ConnectionId);
                 connectionIds = new (ConnectionIdsAtTable);
             }
-            if (connectionIds.Count == 4)
-                this._gameConductorService.StartGame(connectionIds);
             // TODO(jrgfogh): Don't send a list, just send an event saying who joined.
             await this.Clients.All.UpdatePlayersAtTable(connectionIds);
+
+            if (connectionIds.Count == 4)
+                this._gameConductorService.StartGame(connectionIds);
 
             await base.OnConnectedAsync();
         }
@@ -49,12 +50,10 @@ namespace Whist.Server
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SavePlayerName(string key, string text)
+        public async Task SendBid(string bid)
         {
-        }
-
-        public async Task SendBid(string user, string bid)
-        {
+            // TODO(jrgfogh): Get this from somewhere else:
+            var user = "Player A";
             this._gameConductorService.ReceiveBid(bid);
             await this.Clients.All.ReceiveBid(user, bid);
         }

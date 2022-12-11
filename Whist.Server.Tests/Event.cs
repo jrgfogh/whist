@@ -1,6 +1,6 @@
 ﻿namespace Whist.Server.Tests
 {
-    public class Event
+    public sealed class Event
     {
         public readonly string Sender;
 

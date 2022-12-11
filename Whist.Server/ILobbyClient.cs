@@ -7,7 +7,5 @@ namespace Whist.Server
     public interface ILobbyClient
     {
         Task UpdatePlayersAtTable(IEnumerable<string> players);
-
-        Task UpdateListOfTables(IEnumerable<KeyAndText> tables);
     }
 }

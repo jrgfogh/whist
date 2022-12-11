@@ -23,5 +23,10 @@
         {
             return HashCode.Combine(Sender, Message);
         }
+
+        public override string ToString()
+        {
+            return "Sender: " + this.Sender + ", Message: " + this.Message;
+        }
     }
 }

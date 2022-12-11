@@ -27,7 +27,7 @@ namespace Whist.Server.Tests
             return new Event(sender, message);
         }
 
-        private static IEnumerable<Event> ParseEvents(string input) =>
+        protected static IEnumerable<Event> ParseEvents(string input) =>
             input.Split(Environment.NewLine).Select(ParseEvent);
 
         private static string ServerPath() =>
@@ -66,22 +66,44 @@ namespace Whist.Server.Tests
                 .Build();
 
             void HandleEvent(string methodName) =>
-                connection.On(methodName, () =>
+                connection.On(methodName: methodName, () =>
                     _receivedEvents.Add(new Event("To " + playerName, methodName)));
 
             // TODO(jrgfogh): Deal with parameters:
             HandleEvent("PromptForBid");
             HandleEvent("PromptForTrump");
             HandleEvent("PromptForBuddyAce");
-            HandleEvent("UpdatePlayersAtTable");
-            HandleEvent("UpdateListOfTables");
-            
+            connection.On("UpdatePlayersAtTable", (IEnumerable<string> players) =>
+                    _receivedEvents.Add(new Event("To " + playerName, "UpdatePlayersAtTable")));
+            HandleEvent("ReceiveDealtCards");
+            connection.On("ReceiveDealtCards", (IEnumerable<string> cards) =>
+                    _receivedEvents.Add(new Event("To " + playerName, "ReceiveDealtCards")));
             HandleEvent("ReceiveDealtCards");
             HandleEvent("ReceiveBid");
             HandleEvent("ReceiveTrump");
             HandleEvent("ReceiveBuddyAce");
             await connection.StartAsync().ConfigureAwait(false);
             return connection;
+        }
+
+        protected HubConnection GetConnection(string sender) =>
+            sender switch
+            {
+                "Player A" => _connectionA,
+                "Player B" => _connectionB,
+                "Player C" => _connectionC,
+                "Player D" => _connectionD,
+                _ => throw new ArgumentException("Invalid input"),
+            };
+
+        protected static async Task SendMessageAsync(HubConnection connection, string message)
+        {
+            switch (message)
+            {
+                case "pass":
+                    await connection.SendAsync("SendBid", message);
+                    break;
+            }
         }
     }
 }

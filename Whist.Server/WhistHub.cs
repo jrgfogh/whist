@@ -28,8 +28,8 @@ namespace Whist.Server
                 ConnectionIdsAtTable.Add(this.Context.ConnectionId);
                 connectionIds = new (ConnectionIdsAtTable);
             }
-            // TODO(jrgfogh): Don't send a list, just send an event saying who joined.
-            await this.Clients.All.UpdatePlayersAtTable(connectionIds);
+            // TODO(jrgfogh): Don't send a list, just send an event saying who joined, and send it to everyone.
+            await this.Clients.Caller.UpdatePlayersAtTable(connectionIds);
 
             if (connectionIds.Count == 4)
                 this._gameConductorService.StartGame(connectionIds);

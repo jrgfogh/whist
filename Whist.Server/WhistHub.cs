@@ -10,10 +10,8 @@ namespace Whist.Server
     {
         private readonly GameConductorService _gameConductorService;
 
-        private readonly object syncLock = new object();
-
-        // TODO(jrgfogh): This only works, when there is only a single single server process:
-        private static readonly List<string> ConnectionIdsAtTable = new();
+        // TODO(jrgfogh): Move this into the game conductor service instead?
+        private readonly object syncLock = new();
 
         public WhistHub(GameConductorService gameConductorService)
         {
@@ -22,17 +20,14 @@ namespace Whist.Server
 
         public override async Task OnConnectedAsync()
         {
-            List<string> connectionIds;
             lock (syncLock)
             {
-                ConnectionIdsAtTable.Add(this.Context.ConnectionId);
-                connectionIds = new (ConnectionIdsAtTable);
+                this._gameConductorService.ConnectionIdsAtTable.Add(this.Context.ConnectionId);
+                if (this._gameConductorService.ConnectionIdsAtTable.Count == 4)
+                    this._gameConductorService.StartGame();
             }
             // TODO(jrgfogh): Don't send a list, just send an event saying who joined, and send it to everyone.
-            await this.Clients.Caller.UpdatePlayersAtTable(connectionIds);
-
-            if (connectionIds.Count == 4)
-                this._gameConductorService.StartGame(connectionIds);
+            //await this.Clients.Caller.UpdatePlayersAtTable(connectionIds);
 
             await base.OnConnectedAsync();
         }
@@ -42,8 +37,8 @@ namespace Whist.Server
             List<string> connectionIds = null;
             lock (syncLock)
             {
-                if (ConnectionIdsAtTable.Remove(this.Context.ConnectionId))
-                    connectionIds = new (ConnectionIdsAtTable);
+                if (this._gameConductorService.ConnectionIdsAtTable.Remove(this.Context.ConnectionId))
+                    connectionIds = new (this._gameConductorService.ConnectionIdsAtTable);
             }
             if (connectionIds != null)
                 await this.Clients.All.UpdatePlayersAtTable(connectionIds);

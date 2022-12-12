@@ -10,11 +10,6 @@ namespace Whist.Server.Tests
         public void PlayerAIsPrompted()
         {
             var gameEvent = _receivedEvents.Take();
-            for (int i = 0; i < 4; i++)
-            {
-                Assert.That(gameEvent.Message, Is.EqualTo("UpdatePlayersAtTable"));
-                gameEvent = _receivedEvents.Take();
-            }
             Assert.That(gameEvent, Is.EqualTo(new Event("To Player A", "PromptForBid")));
         }
     }

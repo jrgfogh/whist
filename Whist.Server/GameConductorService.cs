@@ -13,9 +13,11 @@ namespace Whist.Server
     {
         private readonly IHubContext<WhistHub, IWhistClient> _hubContext;
         private TaskCompletionSource<string> _promise;
-        private List<string> _connectionIdsAtTable;
+
         // TODO(jrgfogh): Rename!
         private Thread _gameConductorThread;
+
+        public List<string> ConnectionIdsAtTable { get; } = new List<string>();
 
         public GameConductorService(IHubContext<WhistHub, IWhistClient> hubContext)
         {
@@ -27,9 +29,8 @@ namespace Whist.Server
             return Task.CompletedTask;
         }
 
-        public void StartGame(List<string> connectionIdsAtTable)
+        public void StartGame()
         {
-            this._connectionIdsAtTable = connectionIdsAtTable;
             this._gameConductorThread = new Thread(async () =>
             {
                 var gameConductor = new GameConductor(this);
@@ -40,7 +41,7 @@ namespace Whist.Server
 
         private IWhistClient GetClient(int playerIndex)
         {
-            var connectionId = this._connectionIdsAtTable[playerIndex];
+            var connectionId = this.ConnectionIdsAtTable[playerIndex];
             return this._hubContext.Clients.Client(connectionId);
         }
 

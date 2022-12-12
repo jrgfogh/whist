@@ -26,7 +26,7 @@
             // TODO(jrgfogh): I haven't yet written the code, which will use these variables:
             var ace = await this.PromptForBuddyAce(winner);
             // TODO(jrgfogh): Exchange cards.
-            var round = new PlayingRound(CreateTrickEvaluator(winningBid, trump[0]));
+            _ = new PlayingRound(CreateTrickEvaluator(winningBid, trump[0]));
         }
 
         private async Task<(int Winner, string WinningBid)> ConductBiddingRound()

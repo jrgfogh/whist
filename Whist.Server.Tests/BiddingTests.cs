@@ -14,18 +14,36 @@ namespace Whist.Server.Tests
         [Test]
         [TestCase(
 @"To All: Bidding Round
-To Player A: Please bid
+To Player A: PromptForBid
 Player A: pass
-To Player B: Please bid
+To Player B: PromptForBid
 Player B: pass
-To Player C: Please bid
+To Player C: PromptForBid
 Player C: pass
-To Player D: Please bid
+To Player D: PromptForBid
 Player D: 9 common
 To All: Player D wins, 9 common")]
         public async Task BiddingRound(string input)
         {
-            Assert.Pass();
+            foreach (var expectedEvent in ParseEvents(input))
+            {
+                if (expectedEvent.Sender == "To All")
+                {
+                    // TODO(jrgfogh): Do something!
+                }
+                else if (expectedEvent.Sender.StartsWith("To "))
+                {
+                    var actualEvent = _receivedEvents.Take();
+                    Assert.That(actualEvent, Is.EqualTo(expectedEvent));
+                }
+                else
+                    await SendBid(expectedEvent);
+            }
+        }
+
+        private async Task SendBid(Event expectedEvent)
+        {
+            await GetConnection(expectedEvent.Sender).SendAsync("SendBid", expectedEvent.Message);
         }
     }
 }

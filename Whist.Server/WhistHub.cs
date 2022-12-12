@@ -10,27 +10,8 @@ namespace Whist.Server
     {
         private readonly GameConductorService _gameConductorService;
 
-        private readonly object syncLock = new object();
-
-        // TODO(jrgfogh): Make the table name dynamic.
-        private const string TableName = "Table";
-        // TODO(jrgfogh): This only works, when there is only a single single server process:
-        private static readonly Dictionary<string, List<string>> ConnectionIdsAtTable = new()
-        {
-            { TableName, new List<string>() }
-        };
-        private static readonly List<KeyAndText> TableNames = new()
-        {
-            new() { Key = TableName + "Key", Text = TableName }
-        };
-
-        // TODO(jrgfogh): Implement RemoveTable as well.
-        public async Task CreateTable(string name)
-        {
-            // TODO(jrgfogh): Should this be one data structure?
-            TableNames.Add(new KeyAndText() { Key = name + "Key", Text = name });
-            ConnectionIdsAtTable.Add(name, new List<string>());
-        }
+        // TODO(jrgfogh): Move this into the game conductor service instead?
+        private readonly object syncLock = new();
 
         public WhistHub(GameConductorService gameConductorService)
         {
@@ -39,66 +20,49 @@ namespace Whist.Server
 
         public override async Task OnConnectedAsync()
         {
-            await this.Clients.All.UpdateListOfTables(TableNames);
+            lock (syncLock)
+            {
+                this._gameConductorService.ConnectionIdsAtTable.Add(this.Context.ConnectionId);
+                if (this._gameConductorService.ConnectionIdsAtTable.Count == 4)
+                    this._gameConductorService.StartGame();
+            }
+            // TODO(jrgfogh): Don't send a list, just send an event saying who joined, and send it to everyone.
+            //await this.Clients.Caller.UpdatePlayersAtTable(connectionIds);
+
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            await this.Groups.RemoveFromGroupAsync(this.Context.ConnectionId, TableName);
-            // TODO(jrgfogh): Only remove the player if the player is at the table:
-            List<string> connectionIds;
+            List<string> connectionIds = null;
             lock (syncLock)
             {
-                ConnectionIdsAtTable[TableName].Remove(this.Context.ConnectionId);
-                connectionIds = new (ConnectionIdsAtTable[TableName]);
+                if (this._gameConductorService.ConnectionIdsAtTable.Remove(this.Context.ConnectionId))
+                    connectionIds = new (this._gameConductorService.ConnectionIdsAtTable);
             }
-            await this.Clients.Group(TableName).UpdatePlayersAtTable(connectionIds);
+            if (connectionIds != null)
+                await this.Clients.All.UpdatePlayersAtTable(connectionIds);
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SelectTable(string table)
+        public async Task SendBid(string bid)
         {
-            // TODO(jrgfogh): Validate the table name!
-            await this.Groups.AddToGroupAsync(this.Context.ConnectionId, table);
-            List<string> connectionIds;
-            lock (syncLock)
-            {
-                ConnectionIdsAtTable[table].Add(this.Context.ConnectionId);
-                connectionIds = new (ConnectionIdsAtTable[table]);
-            }
-            if (connectionIds.Count == 4)
-                this._gameConductorService.StartGame(connectionIds);
-            // TODO(jrgfogh): Don't send a list, just send an event saying who joined.
-            await this.Clients.Group(table).UpdatePlayersAtTable(connectionIds);
-        }
-
-        public async Task SaveTableName(string key, string text)
-        {
-            TableNames[0].Text = text;
-            await this.Clients.All.UpdateListOfTables(TableNames);
-        }
-
-        public async Task SavePlayerName(string key, string text)
-        {
-        }
-
-        public async Task SendBid(string user, string bid)
-        {
+            // TODO(jrgfogh): Get this from somewhere else:
+            var user = "Player A";
             this._gameConductorService.ReceiveBid(bid);
-            await this.Clients.Group(TableName).ReceiveBid(user, bid);
+            await this.Clients.All.ReceiveBid(user, bid);
         }
 
         public async Task SendTrump(string trump)
         {
             this._gameConductorService.ReceiveTrump(trump);
-            await this.Clients.Group(TableName).ReceiveTrump(trump);
+            await this.Clients.All.ReceiveTrump(trump);
         }
 
         public async Task SendBuddyAce(string buddyAce)
         {
             this._gameConductorService.ReceiveBuddyAce(buddyAce);
-            await this.Clients.Group(TableName).ReceiveBuddyAce(buddyAce);
+            await this.Clients.All.ReceiveBuddyAce(buddyAce);
         }
     }
 }

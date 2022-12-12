@@ -7,15 +7,10 @@ namespace Whist.Server.Tests
         protected override string TestUrl { get; } = "http://localhost:5001";
 
         [Test]
-        public async Task EveryoneSelectsTable()
+        public void PlayerAIsPrompted()
         {
-            await Task.WhenAll(
-                _connectionA.SendAsync("SelectTable", "Table"),
-                _connectionB.SendAsync("SelectTable", "Table"),
-                _connectionC.SendAsync("SelectTable", "Table"),
-                _connectionD.SendAsync("SelectTable", "Table"));
             var gameEvent = _receivedEvents.Take();
-            Assert.That(gameEvent.Message, Is.EqualTo("PromptForBid"));
+            Assert.That(gameEvent, Is.EqualTo(new Event("To Player A", "PromptForBid")));
         }
     }
 }

@@ -29,14 +29,7 @@ To All: Player D wins, 9 common")]
             {
                 if (expectedEvent.Sender == "To All")
                 {
-                    if (expectedEvent.Message == "Bidding Round")
-                    {
-                        // Deliberately ignored for now.
-                    }
-                    else
-                    {
-                        // TODO(jrgfogh): Do something!
-                    }
+                    // TODO(jrgfogh): Do something!
                 }
                 else if (expectedEvent.Sender.StartsWith("To "))
                 {
@@ -44,8 +37,13 @@ To All: Player D wins, 9 common")]
                     Assert.That(actualEvent, Is.EqualTo(expectedEvent));
                 }
                 else
-                    await SendMessageAsync(GetConnection(expectedEvent.Sender), expectedEvent.Message);
+                    await SendBid(expectedEvent);
             }
+        }
+
+        private async Task SendBid(Event expectedEvent)
+        {
+            await GetConnection(expectedEvent.Sender).SendAsync("SendBid", expectedEvent.Message);
         }
     }
 }

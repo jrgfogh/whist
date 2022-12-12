@@ -95,15 +95,5 @@ namespace Whist.Server.Tests
                 "Player D" => _connectionD,
                 _ => throw new ArgumentException("Invalid input"),
             };
-
-        protected static async Task SendMessageAsync(HubConnection connection, string message)
-        {
-            switch (message)
-            {
-                case "pass":
-                    await connection.SendAsync("SendBid", message);
-                    break;
-            }
-        }
     }
 }

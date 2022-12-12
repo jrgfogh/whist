@@ -24,7 +24,7 @@
             // TODO(jrgfogh): Announce the winner?
             var trump = await this.PromptForTrump(winner, winningBid);
             // TODO(jrgfogh): I haven't yet written the code, which will use these variables:
-            var ace = await this.PromptForBuddyAce(winner);
+            _ = await this.PromptForBuddyAce(winner);
             // TODO(jrgfogh): Exchange cards.
             _ = new PlayingRound(CreateTrickEvaluator(winningBid, trump[0]));
         }

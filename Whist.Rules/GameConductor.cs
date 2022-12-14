@@ -21,7 +21,7 @@
         {
             await this.DealCards();
             var (winner, winningBid) = await this.ConductBiddingRound();
-            // TODO(jrgfogh): Announce the winner?
+            await this.AnnounceWinner(winner, winningBid);
             var trump = await this.PromptForTrump(winner, winningBid);
             // TODO(jrgfogh): I haven't yet written the code, which will use these variables:
             _ = await this.PromptForBuddyAce(winner);
@@ -35,6 +35,12 @@
             var round = new BiddingRound();
             while (!round.IsBiddingDone) round.Bid(await this._movePrompter.PromptForBid(round.PlayerToBid));
             return (round.Winner, round.WinningBid!);
+        }
+
+        private async Task AnnounceWinner(int winner, string winningBid)
+        {
+            var playerNames = new[] {"Player A", "Player B", "Player C", "Player D"};
+            await this._movePrompter.AnnounceWinner(playerNames[winner], winningBid);
         }
 
         private async Task DealCards()

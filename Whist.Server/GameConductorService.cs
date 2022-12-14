@@ -87,5 +87,10 @@ namespace Whist.Server
         {
             this._promise.TrySetResult(buddyAce);
         }
+
+        public async Task AnnounceWinner(string winner, string winningBid)
+        {
+            await this._hubContext.Clients.All.AnnounceWinner(winner, winningBid);
+        }
     }
 }

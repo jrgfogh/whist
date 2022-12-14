@@ -12,5 +12,6 @@ namespace Whist.Server
         Task ReceiveBid(string user, string bid);
         Task ReceiveTrump(string trump);
         Task ReceiveBuddyAce(string buddyAce);
+        Task AnnounceWinner(string winner, string winningBid);
     }
 }

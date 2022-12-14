@@ -11,13 +11,20 @@ namespace Whist.Server.Tests
         // The different tests can't bind to the same port:
         protected abstract string TestUrl { get; }
 
-        // TODO(jrgfogh): Use System.Threading.Channels instead?
-        protected readonly BlockingCollection<Event> _receivedEvents = new();
+        protected sealed class TestPlayer
+        {
+            public readonly BlockingCollection<Event> receivedEvents = new();
+            // TODO(jrgfogh): Use System.Threading.Channels instead?
+            public readonly HubConnection connection;
+
+            public TestPlayer(HubConnection connection)
+            {
+                this.connection = connection;
+            }
+        }
+
         protected GameConductorService _conductorService;
-        protected HubConnection _connectionA;
-        protected HubConnection _connectionB;
-        protected HubConnection _connectionC;
-        protected HubConnection _connectionD;
+        protected Dictionary<string, TestPlayer> _testPlayers = new();
 
         private static Event ParseEvent(string line)
         {
@@ -53,47 +60,42 @@ namespace Whist.Server.Tests
         public async Task Setup()
         {
             var uri = new Uri(TestUrl + "/WhistHub");
-            _connectionA = await OpenConnection(uri, "Player A");
-            _connectionB = await OpenConnection(uri, "Player B");
-            _connectionC = await OpenConnection(uri, "Player C");
-            _connectionD = await OpenConnection(uri, "Player D");
+            await OpenConnection(uri, "Player A");
+            await OpenConnection(uri, "Player B");
+            await OpenConnection(uri, "Player C");
+            await OpenConnection(uri, "Player D");
         }
 
-        private async Task<HubConnection> OpenConnection(Uri serverUri, string playerName)
+        private async Task OpenConnection(Uri serverUri, string playerName)
         {
             var connection = new HubConnectionBuilder()
                 .WithUrl(serverUri)
                 .Build();
 
+
             void HandleEvent(string methodName) =>
                 connection.On(methodName: methodName, () =>
-                    _receivedEvents.Add(new Event("To " + playerName, methodName)));
+                        this._testPlayers[playerName].receivedEvents.Add(new Event("To " + playerName, methodName)));
 
             // TODO(jrgfogh): Deal with parameters:
             HandleEvent("PromptForBid");
             HandleEvent("PromptForTrump");
             HandleEvent("PromptForBuddyAce");
             connection.On("UpdatePlayersAtTable", (IEnumerable<string> players) =>
-                    _receivedEvents.Add(new Event("To " + playerName, "UpdatePlayersAtTable")));
-            HandleEvent("ReceiveDealtCards");
+                    this._testPlayers[playerName].receivedEvents.Add(new Event("To " + playerName, "UpdatePlayersAtTable")));
             connection.On("ReceiveDealtCards", (IEnumerable<string> cards) =>
-                    _receivedEvents.Add(new Event("To " + playerName, "ReceiveDealtCards")));
-            HandleEvent("ReceiveDealtCards");
-            HandleEvent("ReceiveBid");
+                    this._testPlayers[playerName].receivedEvents.Add(new Event("To " + playerName, "ReceiveDealtCards")));
+            connection.On("ReceiveBid", (string user, string bid) =>
+                    this._testPlayers[playerName].receivedEvents.Add(new Event("To " + playerName, user + " bids " + bid)));
+            connection.On("AnnounceWinner", (string user, string bid) =>
+                    this._testPlayers[playerName].receivedEvents.Add(new Event("To " + playerName, user + " wins, " + bid)));
             HandleEvent("ReceiveTrump");
             HandleEvent("ReceiveBuddyAce");
             await connection.StartAsync().ConfigureAwait(false);
-            return connection;
+            this._testPlayers[playerName] = new TestPlayer(connection);
         }
 
         protected HubConnection GetConnection(string sender) =>
-            sender switch
-            {
-                "Player A" => _connectionA,
-                "Player B" => _connectionB,
-                "Player C" => _connectionC,
-                "Player D" => _connectionD,
-                _ => throw new ArgumentException("Invalid input"),
-            };
+            _testPlayers[sender].connection;
     }
 }

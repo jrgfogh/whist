@@ -2,7 +2,6 @@ namespace Whist.Server
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.SignalR;
 
@@ -47,10 +46,20 @@ namespace Whist.Server
 
         public async Task SendBid(string bid)
         {
-            // TODO(jrgfogh): Get this from somewhere else:
-            var user = "Player A";
+            await this.Clients.All.ReceiveBid(UserNameOfCaller(), bid);
             this._gameConductorService.ReceiveBid(bid);
-            await this.Clients.All.ReceiveBid(user, bid);
+        }
+
+        private string UserNameOfCaller()
+        {
+            var index = this._gameConductorService.ConnectionIdsAtTable.IndexOf(this.Context.ConnectionId);
+            var playerNames = new[] {
+                "Player A",
+                "Player B",
+                "Player C",
+                "Player D",
+                };
+            return playerNames[index];
         }
 
         public async Task SendTrump(string trump)

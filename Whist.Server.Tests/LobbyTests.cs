@@ -9,7 +9,10 @@ namespace Whist.Server.Tests
         [Test]
         public void PlayerAIsPrompted()
         {
-            var gameEvent = _receivedEvents.Take();
+            var receivedEvents = _testPlayers["Player A"].receivedEvents;
+            var gameEvent = receivedEvents.Take();
+            Assert.That(gameEvent, Is.EqualTo(new Event("To Player A", "ReceiveDealtCards")));
+            gameEvent = receivedEvents.Take();
             Assert.That(gameEvent, Is.EqualTo(new Event("To Player A", "PromptForBid")));
         }
     }

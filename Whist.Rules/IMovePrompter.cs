@@ -9,5 +9,6 @@
         Task<string> PromptForBid(int playerToBid);
         Task<string> PromptForTrump(int winner);
         Task<string> PromptForBuddyAce(int winner);
+        Task AnnounceWinner(string winner, string winningBid);
     }
 }

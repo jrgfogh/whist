@@ -41,3 +41,9 @@ Each project file has to be opened and edited manually, since the NuGet UI can s
 the packages after the platform has been changed using search&replace.
 
 The Azure Devops had to be updated too, since it kept clearing the "Stack" settings for the Azure App Service.
+
+---
+
+Open source development licenses provided by JetBrains:
+
+[![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://jb.gg/OpenSourceSupport)

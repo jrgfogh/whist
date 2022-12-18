@@ -23,7 +23,9 @@ namespace Whist.Server.Tests
             }
         }
 
-        protected GameConductorService ConductorService;
+        protected GameConductorService ConductorService =
+            // NOTE(jrgfogh): The conductor service will be assigned in OneTimeSetup():
+            null!;
         protected Dictionary<string, TestPlayer> TestPlayers = new();
 
         private static Event ParseEvent(string line)

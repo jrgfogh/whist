@@ -17,7 +17,7 @@ namespace Whist.Server
         // TODO(jrgfogh): Rename!
         private Thread _gameConductorThread;
 
-        public List<string> ConnectionIdsAtTable { get; } = new List<string>();
+        public List<string> ConnectionIdsAtTable { get; } = new();
 
         public GameConductorService(IHubContext<WhistHub, IWhistClient> hubContext)
         {
@@ -31,10 +31,10 @@ namespace Whist.Server
 
         public void StartGame()
         {
-            _gameConductorThread = new Thread(async () =>
+            _gameConductorThread = new Thread(() =>
             {
                 var gameConductor = new GameConductor(this);
-                await gameConductor.ConductGame();
+                gameConductor.ConductGame().Wait();
             });
             _gameConductorThread.Start();
         }

@@ -18,7 +18,7 @@ namespace Whist.Rules
                 'K' => 13,
                 'Q' => 12,
                 'J' => 11,
-                _ => int.Parse(_name.Substring(1))
+                _ => int.Parse(_name[1..])
             };
 
         public Card(string name) => _name = name ?? throw new ArgumentNullException(nameof(name));

@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
@@ -16,12 +17,28 @@ namespace Whist.Server
 
         // TODO(jrgfogh): Rename!
         private Thread _gameConductorThread;
+        private readonly CancellationTokenSource _cancellationTokenSource;
 
         public List<string> ConnectionIdsAtTable { get; } = new();
 
         public GameConductorService(IHubContext<WhistHub, IWhistClient> hubContext)
         {
             _hubContext = hubContext;
+            _cancellationTokenSource = new CancellationTokenSource();
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _cancellationTokenSource.Cancel();
+            }
+        }
+
+        public sealed override void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -34,7 +51,7 @@ namespace Whist.Server
             _gameConductorThread = new Thread(() =>
             {
                 var gameConductor = new GameConductor(this);
-                gameConductor.ConductGame().Wait();
+                gameConductor.ConductGame().Wait(_cancellationTokenSource.Token);
             });
             _gameConductorThread.Start();
         }

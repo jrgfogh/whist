@@ -5,7 +5,7 @@ namespace Whist.Rules
     public sealed class PlayingRound
     {
         private readonly TrickEvaluator _evaluator;
-        private readonly List<Card> _cardsInTrick = new List<Card>();
+        private readonly List<Card> _cardsInTrick = new();
 
         public PlayingRound(TrickEvaluator evaluator)
         {

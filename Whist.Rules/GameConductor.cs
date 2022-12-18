@@ -10,7 +10,7 @@ namespace Whist.Rules
     {
         private readonly IMovePrompter _movePrompter;
 
-        private static List<Card> _cat = new();
+        private List<Card> _cat = new();
 
         public GameConductor(IMovePrompter movePrompter)
         {

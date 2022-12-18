@@ -11,7 +11,7 @@ namespace Whist.Server
     {
         public Startup(IConfiguration configuration)
         {
-            this.Configuration = configuration;
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }

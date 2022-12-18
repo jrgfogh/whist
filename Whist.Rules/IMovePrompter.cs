@@ -1,8 +1,8 @@
-﻿namespace Whist.Rules
-{
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
+namespace Whist.Rules
+{
     public interface IMovePrompter
     {
         Task DealCards(int playerIndex, List<Card> cards);

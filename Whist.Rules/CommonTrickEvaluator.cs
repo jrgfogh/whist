@@ -4,11 +4,11 @@
     {
         private readonly char _trump;
 
-        public CommonTrickEvaluator(char trump) => this._trump = trump;
+        public CommonTrickEvaluator(char trump) => _trump = trump;
 
         protected override bool IsCandidateBetterThanCurrentBest(Card candidate, Card currentBest)
         {
-            if (candidate.Suit == this._trump && currentBest.Suit != this._trump)
+            if (candidate.Suit == _trump && currentBest.Suit != _trump)
                 return true;
             return !candidate.IsJoker &&
                    candidate.FaceValue > currentBest.FaceValue &&

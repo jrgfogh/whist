@@ -13,18 +13,18 @@ namespace Whist.Server.Tests
 
         protected sealed class TestPlayer
         {
-            public readonly BlockingCollection<Event> receivedEvents = new();
+            public readonly BlockingCollection<Event> ReceivedEvents = new();
             // TODO(jrgfogh): Use System.Threading.Channels instead?
-            public readonly HubConnection connection;
+            public readonly HubConnection Connection;
 
             public TestPlayer(HubConnection connection)
             {
-                this.connection = connection;
+                Connection = connection;
             }
         }
 
-        protected GameConductorService _conductorService;
-        protected Dictionary<string, TestPlayer> _testPlayers = new();
+        protected GameConductorService ConductorService;
+        protected Dictionary<string, TestPlayer> TestPlayers = new();
 
         private static Event ParseEvent(string line)
         {
@@ -52,7 +52,7 @@ namespace Whist.Server.Tests
                     webBuilder.UseUrls(TestUrl);
                 })
                 .Build();
-            _conductorService = host.Services.GetRequiredService<GameConductorService>();
+            ConductorService = host.Services.GetRequiredService<GameConductorService>();
             await host.StartAsync();
         }
 
@@ -75,27 +75,27 @@ namespace Whist.Server.Tests
 
             void HandleEvent(string methodName) =>
                 connection.On(methodName: methodName, () =>
-                        this._testPlayers[playerName].receivedEvents.Add(new Event("To " + playerName, methodName)));
+                        TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, methodName)));
 
             // TODO(jrgfogh): Deal with parameters:
             HandleEvent("PromptForBid");
             HandleEvent("PromptForTrump");
             HandleEvent("PromptForBuddyAce");
             connection.On("UpdatePlayersAtTable", (IEnumerable<string> players) =>
-                    this._testPlayers[playerName].receivedEvents.Add(new Event("To " + playerName, "UpdatePlayersAtTable")));
+                    TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "UpdatePlayersAtTable")));
             connection.On("ReceiveDealtCards", (IEnumerable<string> cards) =>
-                    this._testPlayers[playerName].receivedEvents.Add(new Event("To " + playerName, "ReceiveDealtCards")));
+                    TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "ReceiveDealtCards")));
             connection.On("ReceiveBid", (string user, string bid) =>
-                    this._testPlayers[playerName].receivedEvents.Add(new Event("To " + playerName, user + " bids " + bid)));
+                    TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, user + " bids " + bid)));
             connection.On("AnnounceWinner", (string user, string bid) =>
-                    this._testPlayers[playerName].receivedEvents.Add(new Event("To " + playerName, user + " wins, " + bid)));
+                    TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, user + " wins, " + bid)));
             HandleEvent("ReceiveTrump");
             HandleEvent("ReceiveBuddyAce");
             await connection.StartAsync().ConfigureAwait(false);
-            this._testPlayers[playerName] = new TestPlayer(connection);
+            TestPlayers[playerName] = new TestPlayer(connection);
         }
 
         protected HubConnection GetConnection(string sender) =>
-            _testPlayers[sender].connection;
+            TestPlayers[sender].Connection;
     }
 }

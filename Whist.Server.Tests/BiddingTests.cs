@@ -1,9 +1,4 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System.Collections.Concurrent;
 
 namespace Whist.Server.Tests
 {
@@ -34,15 +29,15 @@ To Player D: PromptForTrump")]
             {
                 if (expectedEvent.Sender == "To All")
                 {
-                    foreach (var (_, player) in _testPlayers)
+                    foreach (var (_, player) in TestPlayers)
                     {
-                        var actualEvent = player.receivedEvents.Take();
+                        var actualEvent = player.ReceivedEvents.Take();
                         Assert.That(actualEvent.Message, Is.EqualTo(expectedEvent.Message));
                     }
                 }
                 else if (expectedEvent.Sender.StartsWith("To "))
                 {
-                    var actualEvent = _testPlayers[expectedEvent.Sender[3..]].receivedEvents.Take();
+                    var actualEvent = TestPlayers[expectedEvent.Sender[3..]].ReceivedEvents.Take();
                     Assert.That(actualEvent, Is.EqualTo(expectedEvent));
                 }
                 else

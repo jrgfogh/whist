@@ -10,7 +10,7 @@ namespace Whist.Rules
                 return 0;
             var result = 0;
             for (var i = 1; i < 4; i++)
-                if (this.IsCandidateBetterThanCurrentBest(cards[i], cards[result]))
+                if (IsCandidateBetterThanCurrentBest(cards[i], cards[result]))
                     result = i;
             return result;
         }

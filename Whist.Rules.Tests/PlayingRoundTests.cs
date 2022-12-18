@@ -1,9 +1,8 @@
-﻿using System.Linq;
+﻿using NUnit.Framework;
+using System.Linq;
 
 namespace Whist.Rules.Tests
 {
-    using NUnit.Framework;
-
     public sealed class PlayingRoundTests
     {
         [Test]

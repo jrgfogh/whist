@@ -1,13 +1,13 @@
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Whist.Rules;
+
 namespace Whist.Server
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.SignalR;
-    using Microsoft.Extensions.Hosting;
-    using Rules;
-
     // TODO(jrgfogh): Extract a class for the IMovePrompter?
     public sealed class GameConductorService : BackgroundService, IMovePrompter
     {
@@ -21,7 +21,7 @@ namespace Whist.Server
 
         public GameConductorService(IHubContext<WhistHub, IWhistClient> hubContext)
         {
-            this._hubContext = hubContext;
+            _hubContext = hubContext;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -31,66 +31,66 @@ namespace Whist.Server
 
         public void StartGame()
         {
-            this._gameConductorThread = new Thread(async () =>
+            _gameConductorThread = new Thread(async () =>
             {
                 var gameConductor = new GameConductor(this);
                 await gameConductor.ConductGame();
             });
-            this._gameConductorThread.Start();
+            _gameConductorThread.Start();
         }
 
         private IWhistClient GetClient(int playerIndex)
         {
-            var connectionId = this.ConnectionIdsAtTable[playerIndex];
-            return this._hubContext.Clients.Client(connectionId);
+            var connectionId = ConnectionIdsAtTable[playerIndex];
+            return _hubContext.Clients.Client(connectionId);
         }
 
         public async Task<string> PromptForBid(int playerToBid)
         {
-            this._promise = new TaskCompletionSource<string>();
-            await this.GetClient(playerToBid).PromptForBid();
-            return await this._promise.Task;
+            _promise = new TaskCompletionSource<string>();
+            await GetClient(playerToBid).PromptForBid();
+            return await _promise.Task;
         }
 
         public async Task<string> PromptForTrump(int winner)
         {
-            this._promise = new TaskCompletionSource<string>();
-            await this.GetClient(winner).PromptForTrump();
-            return await this._promise.Task;
+            _promise = new TaskCompletionSource<string>();
+            await GetClient(winner).PromptForTrump();
+            return await _promise.Task;
         }
 
         public async Task<string> PromptForBuddyAce(int winner)
         {
-            this._promise = new TaskCompletionSource<string>();
-            await this.GetClient(winner).PromptForBuddyAce();
-            return await this._promise.Task;
+            _promise = new TaskCompletionSource<string>();
+            await GetClient(winner).PromptForBuddyAce();
+            return await _promise.Task;
         }
 
         public async Task DealCards(int playerIndex, List<Card> cards)
         {
-            await this.GetClient(playerIndex).ReceiveDealtCards(cards.Select(c => c.ToString()));
+            await GetClient(playerIndex).ReceiveDealtCards(cards.Select(c => c.ToString()));
         }
 
         // TODO(jrgfogh): Unduplicate!
         // TODO(jrgfogh): Check that we are expecting the message we received.
         public void ReceiveBid(string bid)
         {
-            this._promise.TrySetResult(bid);
+            _promise.TrySetResult(bid);
         }
 
         public void ReceiveTrump(string trump)
         {
-            this._promise.TrySetResult(trump);
+            _promise.TrySetResult(trump);
         }
 
         public void ReceiveBuddyAce(string buddyAce)
         {
-            this._promise.TrySetResult(buddyAce);
+            _promise.TrySetResult(buddyAce);
         }
 
         public async Task AnnounceWinner(string winner, string winningBid)
         {
-            await this._hubContext.Clients.All.AnnounceWinner(winner, winningBid);
+            await _hubContext.Clients.All.AnnounceWinner(winner, winningBid);
         }
     }
 }

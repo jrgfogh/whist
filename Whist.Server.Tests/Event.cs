@@ -26,7 +26,7 @@
 
         public override string ToString()
         {
-            return "Sender: " + this.Sender + ", Message: " + this.Message;
+            return "Sender: " + Sender + ", Message: " + Message;
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
-
-namespace Whist.Server.Tests
+﻿namespace Whist.Server.Tests
 {
     public class LobbyTests : IntegrationTest
     {
@@ -9,7 +7,7 @@ namespace Whist.Server.Tests
         [Test]
         public void PlayerAIsPrompted()
         {
-            var receivedEvents = _testPlayers["Player A"].receivedEvents;
+            var receivedEvents = TestPlayers["Player A"].ReceivedEvents;
             var gameEvent = receivedEvents.Take();
             Assert.That(gameEvent, Is.EqualTo(new Event("To Player A", "ReceiveDealtCards")));
             gameEvent = receivedEvents.Take();

@@ -1,8 +1,8 @@
-﻿namespace Whist.Rules.Tests
-{
-    using NUnit.Framework;
-    using System.Linq;
+﻿using NUnit.Framework;
+using System.Linq;
 
+namespace Whist.Rules.Tests
+{
     public sealed class BiddingRoundTests
     {
         [Test]

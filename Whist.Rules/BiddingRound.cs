@@ -10,20 +10,20 @@
         {
             if (bid == "pass")
             {
-                if (this._playerAsTurn) this._playerA = this._playerB;
-                this._playerB++;
+                if (_playerAsTurn) _playerA = _playerB;
+                _playerB++;
             }
             else
             {
-                this._playerAsTurn = !this._playerAsTurn;
-                this.Winner = this.PlayerToBid;
-                this.WinningBid = bid;
+                _playerAsTurn = !_playerAsTurn;
+                Winner = PlayerToBid;
+                WinningBid = bid;
             }
 
-            this.PlayerToBid = this._playerAsTurn ? this._playerA : this._playerB;
+            PlayerToBid = _playerAsTurn ? _playerA : _playerB;
         }
 
-        public bool IsBiddingDone => this.PlayerToBid == 4;
+        public bool IsBiddingDone => PlayerToBid == 4;
         public int PlayerToBid { get; private set; }
         public int Winner { get; private set; }
         public string? WinningBid { get; private set; }

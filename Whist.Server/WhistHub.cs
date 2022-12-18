@@ -1,29 +1,29 @@
+using Microsoft.AspNetCore.SignalR;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace Whist.Server
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.SignalR;
-
     public sealed class WhistHub : Hub<IWhistClient>
     {
         private readonly GameConductorService _gameConductorService;
 
         // TODO(jrgfogh): Move this into the game conductor service instead?
-        private readonly object syncLock = new();
+        private readonly object _syncLock = new();
 
         public WhistHub(GameConductorService gameConductorService)
         {
-            this._gameConductorService = gameConductorService;
+            _gameConductorService = gameConductorService;
         }
 
         public override async Task OnConnectedAsync()
         {
-            lock (syncLock)
+            lock (_syncLock)
             {
-                this._gameConductorService.ConnectionIdsAtTable.Add(this.Context.ConnectionId);
-                if (this._gameConductorService.ConnectionIdsAtTable.Count == 4)
-                    this._gameConductorService.StartGame();
+                _gameConductorService.ConnectionIdsAtTable.Add(Context.ConnectionId);
+                if (_gameConductorService.ConnectionIdsAtTable.Count == 4)
+                    _gameConductorService.StartGame();
             }
             // TODO(jrgfogh): Don't send a list, just send an event saying who joined, and send it to everyone.
             //await this.Clients.Caller.UpdatePlayersAtTable(connectionIds);
@@ -34,25 +34,25 @@ namespace Whist.Server
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             List<string> connectionIds = null;
-            lock (syncLock)
+            lock (_syncLock)
             {
-                if (this._gameConductorService.ConnectionIdsAtTable.Remove(this.Context.ConnectionId))
-                    connectionIds = new (this._gameConductorService.ConnectionIdsAtTable);
+                if (_gameConductorService.ConnectionIdsAtTable.Remove(Context.ConnectionId))
+                    connectionIds = new(_gameConductorService.ConnectionIdsAtTable);
             }
             if (connectionIds != null)
-                await this.Clients.All.UpdatePlayersAtTable(connectionIds);
+                await Clients.All.UpdatePlayersAtTable(connectionIds);
             await base.OnDisconnectedAsync(exception);
         }
 
         public async Task SendBid(string bid)
         {
-            await this.Clients.All.ReceiveBid(UserNameOfCaller(), bid);
-            this._gameConductorService.ReceiveBid(bid);
+            await Clients.All.ReceiveBid(UserNameOfCaller(), bid);
+            _gameConductorService.ReceiveBid(bid);
         }
 
         private string UserNameOfCaller()
         {
-            var index = this._gameConductorService.ConnectionIdsAtTable.IndexOf(this.Context.ConnectionId);
+            var index = _gameConductorService.ConnectionIdsAtTable.IndexOf(Context.ConnectionId);
             var playerNames = new[] {
                 "Player A",
                 "Player B",
@@ -64,14 +64,14 @@ namespace Whist.Server
 
         public async Task SendTrump(string trump)
         {
-            this._gameConductorService.ReceiveTrump(trump);
-            await this.Clients.All.ReceiveTrump(trump);
+            _gameConductorService.ReceiveTrump(trump);
+            await Clients.All.ReceiveTrump(trump);
         }
 
         public async Task SendBuddyAce(string buddyAce)
         {
-            this._gameConductorService.ReceiveBuddyAce(buddyAce);
-            await this.Clients.All.ReceiveBuddyAce(buddyAce);
+            _gameConductorService.ReceiveBuddyAce(buddyAce);
+            await Clients.All.ReceiveBuddyAce(buddyAce);
         }
     }
 }

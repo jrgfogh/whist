@@ -25,7 +25,6 @@ namespace Whist.Server
 
         public override void Dispose()
         {
-            var state = _gameConductorThread.ThreadState;
             _gameConductorThread.Interrupt();
             _gameConductorThread.Join();
             base.Dispose();

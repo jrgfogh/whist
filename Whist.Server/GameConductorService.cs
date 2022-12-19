@@ -9,36 +9,26 @@ using Whist.Rules;
 
 namespace Whist.Server
 {
-    // TODO(jrgfogh): Extract a class for the IMovePrompter?
     public sealed class GameConductorService : BackgroundService, IMovePrompter
     {
         private readonly IHubContext<WhistHub, IWhistClient> _hubContext;
         private TaskCompletionSource<string> _promise;
 
-        // TODO(jrgfogh): Rename!
         private Thread _gameConductorThread;
-        private readonly CancellationTokenSource _cancellationTokenSource;
 
         public List<string> ConnectionIdsAtTable { get; } = new();
 
         public GameConductorService(IHubContext<WhistHub, IWhistClient> hubContext)
         {
             _hubContext = hubContext;
-            _cancellationTokenSource = new CancellationTokenSource();
         }
 
-        private void Dispose(bool disposing)
+        public override void Dispose()
         {
-            if (disposing)
-            {
-                _cancellationTokenSource.Cancel();
-            }
-        }
-
-        public sealed override void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            var state = _gameConductorThread.ThreadState;
+            _gameConductorThread.Interrupt();
+            _gameConductorThread.Join();
+            base.Dispose();
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -51,7 +41,13 @@ namespace Whist.Server
             _gameConductorThread = new Thread(() =>
             {
                 var gameConductor = new GameConductor(this);
-                gameConductor.ConductGame().Wait(_cancellationTokenSource.Token);
+                try
+                {
+                    gameConductor.ConductGame().Wait();
+                }
+                catch (ThreadInterruptedException)
+                {
+                }
             });
             _gameConductorThread.Start();
         }

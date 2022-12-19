@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
@@ -8,20 +9,26 @@ using Whist.Rules;
 
 namespace Whist.Server
 {
-    // TODO(jrgfogh): Extract a class for the IMovePrompter?
     public sealed class GameConductorService : BackgroundService, IMovePrompter
     {
         private readonly IHubContext<WhistHub, IWhistClient> _hubContext;
         private TaskCompletionSource<string> _promise;
 
-        // TODO(jrgfogh): Rename!
-        private Thread _gameConductorThread;
+        private Task _gameConductorTask;
+        private readonly CancellationTokenSource _cancellationTokenSource;
 
-        public List<string> ConnectionIdsAtTable { get; } = new List<string>();
+        public List<string> ConnectionIdsAtTable { get; } = new();
 
         public GameConductorService(IHubContext<WhistHub, IWhistClient> hubContext)
         {
             _hubContext = hubContext;
+            _cancellationTokenSource = new CancellationTokenSource();
+        }
+
+        public override void Dispose()
+        {
+            _cancellationTokenSource.Cancel();
+            base.Dispose();
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -31,12 +38,11 @@ namespace Whist.Server
 
         public void StartGame()
         {
-            _gameConductorThread = new Thread(async () =>
+            _gameConductorTask = Task.Run(async () =>
             {
                 var gameConductor = new GameConductor(this);
-                await gameConductor.ConductGame();
+                await gameConductor.ConductGame().WaitAsync(_cancellationTokenSource.Token).ConfigureAwait(false);
             });
-            _gameConductorThread.Start();
         }
 
         private IWhistClient GetClient(int playerIndex)

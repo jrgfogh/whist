@@ -23,7 +23,8 @@ namespace Whist.Server.Tests
             }
         }
 
-        protected GameConductorService ConductorService;
+        protected GameConductorService ConductorService = null!;
+        private IHost _host = null!;
         protected Dictionary<string, TestPlayer> TestPlayers = new();
 
         private static Event ParseEvent(string line)
@@ -45,15 +46,22 @@ namespace Whist.Server.Tests
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
             Environment.CurrentDirectory = ServerPath();
-            var host = Program.CreateHostBuilder(null)
+            _host = Program.CreateHostBuilder(null)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseKestrel();
                     webBuilder.UseUrls(TestUrl);
                 })
                 .Build();
-            ConductorService = host.Services.GetRequiredService<GameConductorService>();
-            await host.StartAsync();
+            ConductorService = _host.Services.GetRequiredService<GameConductorService>();
+            await _host.StartAsync();
+        }
+
+        [OneTimeTearDown]
+        public async Task OneTimeTearDown()
+        {
+            await _host.StopAsync();
+            _host.Dispose();
         }
 
         [SetUp]

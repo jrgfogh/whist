@@ -35,9 +35,7 @@ namespace Whist.Rules
             foreach (var index in Enumerable.Range(0, _cards.Count))
             {
                 var swapIndex = generator.Next(index, _cards.Count);
-                var tmp = _cards[index];
-                _cards[index] = _cards[swapIndex];
-                _cards[swapIndex] = tmp;
+                (_cards[index], _cards[swapIndex]) = (_cards[swapIndex], _cards[index]);
             }
         }
 

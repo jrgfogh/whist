@@ -14,19 +14,20 @@ namespace Whist.Server
         private readonly IHubContext<WhistHub, IWhistClient> _hubContext;
         private TaskCompletionSource<string> _promise;
 
-        private Thread _gameConductorThread;
+        private Task _gameConductorTask;
+        private readonly CancellationTokenSource _cancellationTokenSource;
 
         public List<string> ConnectionIdsAtTable { get; } = new();
 
         public GameConductorService(IHubContext<WhistHub, IWhistClient> hubContext)
         {
             _hubContext = hubContext;
+            _cancellationTokenSource = new CancellationTokenSource();
         }
 
         public override void Dispose()
         {
-            _gameConductorThread.Interrupt();
-            _gameConductorThread.Join();
+            _cancellationTokenSource.Cancel();
             base.Dispose();
         }
 
@@ -37,18 +38,11 @@ namespace Whist.Server
 
         public void StartGame()
         {
-            _gameConductorThread = new Thread(() =>
+            _gameConductorTask = Task.Run(async () =>
             {
                 var gameConductor = new GameConductor(this);
-                try
-                {
-                    gameConductor.ConductGame().Wait();
-                }
-                catch (ThreadInterruptedException)
-                {
-                }
+                await gameConductor.ConductGame().WaitAsync(_cancellationTokenSource.Token).ConfigureAwait(false);
             });
-            _gameConductorThread.Start();
         }
 
         private IWhistClient GetClient(int playerIndex)

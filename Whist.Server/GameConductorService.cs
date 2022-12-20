@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
@@ -14,7 +13,6 @@ namespace Whist.Server
         private readonly IHubContext<WhistHub, IWhistClient> _hubContext;
         private TaskCompletionSource<string> _promise;
 
-        private Task _gameConductorTask;
         private readonly CancellationTokenSource _cancellationTokenSource;
 
         public List<string> ConnectionIdsAtTable { get; } = new();
@@ -38,7 +36,7 @@ namespace Whist.Server
 
         public void StartGame()
         {
-            _gameConductorTask = Task.Run(async () =>
+            Task.Run(async () =>
             {
                 var gameConductor = new GameConductor(this);
                 await gameConductor.ConductGame().WaitAsync(_cancellationTokenSource.Token).ConfigureAwait(false);

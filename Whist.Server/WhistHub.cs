@@ -37,7 +37,7 @@ namespace Whist.Server
             lock (_syncLock)
             {
                 if (_gameConductorService.ConnectionIdsAtTable.Remove(Context.ConnectionId))
-                    connectionIds = new(_gameConductorService.ConnectionIdsAtTable);
+                    connectionIds = new List<string>(_gameConductorService.ConnectionIdsAtTable);
             }
             if (connectionIds != null)
                 await Clients.All.UpdatePlayersAtTable(connectionIds);
@@ -64,8 +64,8 @@ namespace Whist.Server
 
         public async Task SendTrump(string trump)
         {
-            _gameConductorService.ReceiveTrump(trump);
             await Clients.All.ReceiveTrump(trump);
+            _gameConductorService.ReceiveTrump(trump);
         }
 
         public async Task SendBuddyAce(string buddyAce)

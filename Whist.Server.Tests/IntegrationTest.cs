@@ -97,8 +97,10 @@ namespace Whist.Server.Tests
                     TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, user + " bids " + bid)));
             connection.On("AnnounceWinner", (string user, string bid) =>
                     TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, user + " wins, " + bid)));
-            HandleEvent("ReceiveTrump");
-            HandleEvent("ReceiveBuddyAce");
+            connection.On("ReceiveTrump", (string trump) =>
+                TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "Trump is " + trump)));
+            connection.On("ReceiveBuddyAce", (string trump) =>
+                TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "Buddy ace is " + trump)));
             await connection.StartAsync().ConfigureAwait(false);
             TestPlayers[playerName] = new TestPlayer(connection);
         }

@@ -22,7 +22,8 @@ To Player D: PromptForBid
 Player D: 9 common
 To All: Player D bids 9 common
 To All: Player D wins, 9 common
-To Player D: PromptForTrump")]
+To Player D: PromptForTrump
+Player D: Trump is C")]
         public async Task BiddingRound(string input)
         {
             foreach (var expectedEvent in ParseEvents(input))
@@ -40,14 +41,21 @@ To Player D: PromptForTrump")]
                     var actualEvent = TestPlayers[expectedEvent.Sender[3..]].ReceivedEvents.Take();
                     Assert.That(actualEvent, Is.EqualTo(expectedEvent));
                 }
+                else if (expectedEvent.Message.StartsWith("Trump is "))
+                    await SendTrump(expectedEvent);
                 else
                     await SendBid(expectedEvent);
             }
         }
 
+        private async Task SendTrump(Event expectedEvent)
+        {
+            await GetConnection(expectedEvent.Sender).SendAsync("SendTrump", expectedEvent.Message["Trump is ".Length..]).ConfigureAwait(false);
+        }
+
         private async Task SendBid(Event expectedEvent)
         {
-            await GetConnection(expectedEvent.Sender).SendAsync("SendBid", expectedEvent.Message);
+            await GetConnection(expectedEvent.Sender).SendAsync("SendBid", expectedEvent.Message).ConfigureAwait(false);
         }
     }
 }

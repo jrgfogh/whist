@@ -12,10 +12,9 @@ namespace Whist.Server
     {
         private readonly IHubContext<WhistHub, IWhistClient> _hubContext;
         private TaskCompletionSource<string> _promise;
-
         private readonly CancellationTokenSource _cancellationTokenSource;
-
-        public List<string> ConnectionIdsAtTable { get; } = new();
+        private readonly object _connectionIdsSyncLock = new();
+        private readonly List<string> _connectionIdsAtTable = new();
 
         public GameConductorService(IHubContext<WhistHub, IWhistClient> hubContext)
         {
@@ -45,8 +44,11 @@ namespace Whist.Server
 
         private IWhistClient GetClient(int playerIndex)
         {
-            var connectionId = ConnectionIdsAtTable[playerIndex];
-            return _hubContext.Clients.Client(connectionId);
+            lock (_connectionIdsSyncLock)
+            {
+                var connectionId = _connectionIdsAtTable[playerIndex];
+                return _hubContext.Clients.Client(connectionId);
+            }
         }
 
         public async Task<string> PromptForBid(int playerToBid)
@@ -95,6 +97,40 @@ namespace Whist.Server
         public async Task AnnounceWinner(string winner, string winningBid)
         {
             await _hubContext.Clients.All.AnnounceWinner(winner, winningBid);
+        }
+
+        public void LeaveTable(string connectionId)
+        {
+            lock (_connectionIdsSyncLock)
+            {
+                _connectionIdsAtTable.Remove(connectionId);
+            }
+        }
+
+        public void JoinTable(string connectionId)
+        {
+            lock (_connectionIdsSyncLock)
+            {
+                _connectionIdsAtTable.Add(connectionId);
+                if (_connectionIdsAtTable.Count == 4)
+                    StartGame();
+            }
+        }
+
+        public string UserName(string connectionId)
+        {
+            lock (_connectionIdsSyncLock)
+            {
+                var index = _connectionIdsAtTable.IndexOf(connectionId);
+                var playerNames = new[]
+                {
+                    "Player A",
+                    "Player B",
+                    "Player C",
+                    "Player D",
+                };
+                return playerNames[index];
+            }
         }
     }
 }

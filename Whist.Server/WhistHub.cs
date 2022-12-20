@@ -1,16 +1,12 @@
-using Microsoft.AspNetCore.SignalR;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Whist.Server
 {
     public sealed class WhistHub : Hub<IWhistClient>
     {
         private readonly GameConductorService _gameConductorService;
-
-        // TODO(jrgfogh): Move this into the game conductor service instead?
-        private readonly object _syncLock = new();
 
         public WhistHub(GameConductorService gameConductorService)
         {
@@ -19,47 +15,21 @@ namespace Whist.Server
 
         public override async Task OnConnectedAsync()
         {
-            lock (_syncLock)
-            {
-                _gameConductorService.ConnectionIdsAtTable.Add(Context.ConnectionId);
-                if (_gameConductorService.ConnectionIdsAtTable.Count == 4)
-                    _gameConductorService.StartGame();
-            }
-            // TODO(jrgfogh): Don't send a list, just send an event saying who joined, and send it to everyone.
-            //await this.Clients.Caller.UpdatePlayersAtTable(connectionIds);
-
+            _gameConductorService.JoinTable(Context.ConnectionId);
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            List<string> connectionIds = null;
-            lock (_syncLock)
-            {
-                if (_gameConductorService.ConnectionIdsAtTable.Remove(Context.ConnectionId))
-                    connectionIds = new List<string>(_gameConductorService.ConnectionIdsAtTable);
-            }
-            if (connectionIds != null)
-                await Clients.All.UpdatePlayersAtTable(connectionIds);
+            _gameConductorService.LeaveTable(Context.ConnectionId);
             await base.OnDisconnectedAsync(exception);
         }
 
         public async Task SendBid(string bid)
         {
-            await Clients.All.ReceiveBid(UserNameOfCaller(), bid);
+            var userNameOfCaller = _gameConductorService.UserName(Context.ConnectionId);
+            await Clients.All.ReceiveBid(userNameOfCaller, bid);
             _gameConductorService.ReceiveBid(bid);
-        }
-
-        private string UserNameOfCaller()
-        {
-            var index = _gameConductorService.ConnectionIdsAtTable.IndexOf(Context.ConnectionId);
-            var playerNames = new[] {
-                "Player A",
-                "Player B",
-                "Player C",
-                "Player D",
-                };
-            return playerNames[index];
         }
 
         public async Task SendTrump(string trump)

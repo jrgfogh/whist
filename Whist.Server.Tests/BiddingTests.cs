@@ -56,7 +56,7 @@ To All: Buddy ace is H")]
 
         private async Task SendBuddyAce(Event expectedEvent)
         {
-            await GetConnection(expectedEvent.Sender).SendAsync("SendBuddyAce", expectedEvent.Message["Buddy ace is ".Length..]).ConfigureAwait(false);
+            await GetConnection(expectedEvent.Sender).SendAsync("SendBuddyAce", expectedEvent.Message).ConfigureAwait(false);
         }
 
         private async Task SendTrump(Event expectedEvent)

@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
@@ -69,7 +70,11 @@ namespace Whist.Server
         {
             _promise = new TaskCompletionSource<string>();
             await GetClient(winner).PromptForBuddyAce();
-            return await _promise.Task;
+            var receivedBuddyAce = await _promise.Task;
+            // TODO(jrgfogh): Test this!
+            if (!receivedBuddyAce.StartsWith("Buddy ace is "))
+                throw new Exception("Received unexpected buddy ace message: " + receivedBuddyAce);
+            return receivedBuddyAce;
         }
 
         public async Task DealCards(int playerIndex, List<Card> cards)
@@ -77,21 +82,9 @@ namespace Whist.Server
             await GetClient(playerIndex).ReceiveDealtCards(cards.Select(c => c.ToString()));
         }
 
-        // TODO(jrgfogh): Unduplicate!
-        // TODO(jrgfogh): Check that we are expecting the message we received.
-        public void ReceiveBid(string bid)
+        public void ReceiveChoice(string choice)
         {
-            _promise.TrySetResult(bid);
-        }
-
-        public void ReceiveTrump(string trump)
-        {
-            _promise.TrySetResult(trump);
-        }
-
-        public void ReceiveBuddyAce(string buddyAce)
-        {
-            _promise.TrySetResult(buddyAce);
+            _promise.TrySetResult(choice);
         }
 
         public async Task AnnounceWinner(string winner, string winningBid)

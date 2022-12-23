@@ -85,7 +85,6 @@ namespace Whist.Server.Tests
                 connection.On(methodName: methodName, () =>
                         TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, methodName)));
 
-            // TODO(jrgfogh): Deal with parameters:
             HandleEvent("PromptForBid");
             HandleEvent("PromptForTrump");
             HandleEvent("PromptForBuddyAce");
@@ -93,14 +92,11 @@ namespace Whist.Server.Tests
                     TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "UpdatePlayersAtTable")));
             connection.On("ReceiveDealtCards", (IEnumerable<string> cards) =>
                     TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "ReceiveDealtCards")));
-            connection.On("ReceiveBid", (string user, string bid) =>
-                    TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, user + " bids " + bid)));
             connection.On("AnnounceWinner", (string user, string bid) =>
                     TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, user + " wins, " + bid)));
-            connection.On("ReceiveTrump", (string trump) =>
-                TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "Trump is " + trump)));
-            connection.On("ReceiveBuddyAce", (string trump) =>
-                TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "Buddy ace is " + trump)));
+            connection.On("ReceiveChoice", (string chooser, string choice) =>
+                TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName,
+                chooser + " chooses " + choice)));
             await connection.StartAsync().ConfigureAwait(false);
             TestPlayers[playerName] = new TestPlayer(connection);
         }

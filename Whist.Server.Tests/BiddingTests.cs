@@ -11,23 +11,23 @@ namespace Whist.Server.Tests
 @"To All: ReceiveDealtCards
 To Player A: PromptForBid
 Player A: pass
-To All: Player A bids pass
+To All: Player A chooses pass
 To Player B: PromptForBid
 Player B: pass
-To All: Player B bids pass
+To All: Player B chooses pass
 To Player C: PromptForBid
 Player C: pass
-To All: Player C bids pass
+To All: Player C chooses pass
 To Player D: PromptForBid
 Player D: 9 common
-To All: Player D bids 9 common
+To All: Player D chooses 9 common
 To All: Player D wins, 9 common
 To Player D: PromptForTrump
 Player D: Trump is S
-To All: Trump is S
+To All: Player D chooses Trump is S
 To Player D: PromptForBuddyAce
 Player D: Buddy ace is H
-To All: Buddy ace is H")]
+To All: Player D chooses Buddy ace is H")]
         public async Task BiddingRound(string input)
         {
             foreach (var expectedEvent in ParseEvents(input))
@@ -45,28 +45,14 @@ To All: Buddy ace is H")]
                     var actualEvent = TestPlayers[expectedEvent.Sender[3..]].ReceivedEvents.Take();
                     Assert.That(actualEvent, Is.EqualTo(expectedEvent));
                 }
-                else if (expectedEvent.Message.StartsWith("Trump is "))
-                    await SendTrump(expectedEvent);
-                else if (expectedEvent.Message.StartsWith("Buddy ace is "))
-                    await SendBuddyAce(expectedEvent);
                 else
-                    await SendBid(expectedEvent);
+                    await SendChoice(expectedEvent);
             }
         }
 
-        private async Task SendBuddyAce(Event expectedEvent)
+        private async Task SendChoice(Event expectedEvent)
         {
-            await GetConnection(expectedEvent.Sender).SendAsync("SendBuddyAce", expectedEvent.Message["Buddy ace is ".Length..]).ConfigureAwait(false);
-        }
-
-        private async Task SendTrump(Event expectedEvent)
-        {
-            await GetConnection(expectedEvent.Sender).SendAsync("SendTrump", expectedEvent.Message["Trump is ".Length..]).ConfigureAwait(false);
-        }
-
-        private async Task SendBid(Event expectedEvent)
-        {
-            await GetConnection(expectedEvent.Sender).SendAsync("SendBid", expectedEvent.Message).ConfigureAwait(false);
+            await GetConnection(expectedEvent.Sender).SendAsync("SendChoice", expectedEvent.Message).ConfigureAwait(false);
         }
     }
 }

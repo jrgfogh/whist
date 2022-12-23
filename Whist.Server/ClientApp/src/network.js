@@ -5,13 +5,16 @@ export function connect(client) {
         .configureLogging(signalR.LogLevel.Information)
         .withUrl("/WhistHub")
         .build();
-    connection.on("UpdateListOfTables", (tables) => client.updateListOfTables(tables));
-    connection.on("UpdatePlayersAtTable", (players) => client.updatePlayersAtTable(players));
-    connection.on("ReceiveDealtCards", (cards) => client.receiveDealtCards(cards));
+    connection.on("ReceiveDealtCards", (cards) =>
+        {
+            cards.sort();
+            client.receiveDealtCards(cards);
+        });
     connection.start().then(function() {
         // TODO(jrgfogh): Do something!
     }).catch(function(err) {
         // TODO(jrgfogh): Do something!
+        console.log(err);
     });
     return connection;
 }

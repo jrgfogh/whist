@@ -36,7 +36,7 @@
 .hand {
     position: absolute;
     bottom: 20px;
-    left: 50%;
+    left: 40%;
     -webkit-transform: translateX(-50%);
     transform: translateX(-50%);
 }

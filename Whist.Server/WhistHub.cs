@@ -25,17 +25,15 @@ namespace Whist.Server
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SendBid(string bid)
-        {
-            var userNameOfCaller = _gameConductorService.UserName(Context.ConnectionId);
-            await Clients.All.ReceiveBid(userNameOfCaller, bid);
-            _gameConductorService.ReceiveChoice(bid);
-        }
-
         public async Task SendChoice(string choice)
         {
-            await Clients.All.ReceiveChoice(choice);
+            await Clients.All.ReceiveChoice(UserNameOfCaller(), choice);
             _gameConductorService.ReceiveChoice(choice);
+        }
+
+        private string UserNameOfCaller()
+        {
+            return _gameConductorService.UserName(Context.ConnectionId);
         }
     }
 }

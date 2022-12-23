@@ -32,16 +32,10 @@ namespace Whist.Server
             _gameConductorService.ReceiveChoice(bid);
         }
 
-        public async Task SendTrump(string trump)
+        public async Task SendChoice(string choice)
         {
-            await Clients.All.ReceiveTrump(trump);
-            _gameConductorService.ReceiveChoice(trump);
-        }
-
-        public async Task SendBuddyAce(string buddyAce)
-        {
-            _gameConductorService.ReceiveChoice(buddyAce);
-            await Clients.All.ReceiveBuddyAce(buddyAce["Buddy ace is ".Length..]);
+            await Clients.All.ReceiveChoice(choice);
+            _gameConductorService.ReceiveChoice(choice);
         }
     }
 }

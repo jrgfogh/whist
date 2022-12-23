@@ -45,23 +45,17 @@ To All: Buddy ace is H")]
                     var actualEvent = TestPlayers[expectedEvent.Sender[3..]].ReceivedEvents.Take();
                     Assert.That(actualEvent, Is.EqualTo(expectedEvent));
                 }
-                else if (expectedEvent.Message.StartsWith("Trump is "))
-                    await SendTrump(expectedEvent);
-                else if (expectedEvent.Message.StartsWith("Buddy ace is "))
-                    await SendBuddyAce(expectedEvent);
+                else if (expectedEvent.Message.StartsWith("Trump is ") ||
+                    expectedEvent.Message.StartsWith("Buddy ace is "))
+                    await SendChoice(expectedEvent);
                 else
                     await SendBid(expectedEvent);
             }
         }
 
-        private async Task SendBuddyAce(Event expectedEvent)
+        private async Task SendChoice(Event expectedEvent)
         {
-            await GetConnection(expectedEvent.Sender).SendAsync("SendBuddyAce", expectedEvent.Message).ConfigureAwait(false);
-        }
-
-        private async Task SendTrump(Event expectedEvent)
-        {
-            await GetConnection(expectedEvent.Sender).SendAsync("SendTrump", expectedEvent.Message["Trump is ".Length..]).ConfigureAwait(false);
+            await GetConnection(expectedEvent.Sender).SendAsync("SendChoice", expectedEvent.Message).ConfigureAwait(false);
         }
 
         private async Task SendBid(Event expectedEvent)

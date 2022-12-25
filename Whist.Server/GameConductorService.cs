@@ -77,6 +77,13 @@ namespace Whist.Server
             return receivedBuddyAce;
         }
 
+        public async Task<string> PromptForCard(int playerToPlay)
+        {
+            _promise = new TaskCompletionSource<string>();
+            await GetClient(playerToPlay).PromptForCard();
+            return await _promise.Task;
+        }
+
         public async Task DealCards(int playerIndex, List<Card> cards)
         {
             await GetClient(playerIndex).ReceiveDealtCards(cards.Select(c => c.ToString()));

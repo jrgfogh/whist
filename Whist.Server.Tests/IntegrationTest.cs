@@ -80,18 +80,18 @@ namespace Whist.Server.Tests
                 .WithUrl(serverUri)
                 .Build();
 
-
-            void HandleEvent(string methodName) =>
+            void HandleEvent(string methodName, string message) =>
                 connection.On(methodName: methodName, () =>
-                        TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, methodName)));
+                        TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, message)));
 
-            HandleEvent("PromptForBid");
-            HandleEvent("PromptForTrump");
-            HandleEvent("PromptForBuddyAce");
+            HandleEvent("PromptForBid", "Please bid!");
+            HandleEvent("PromptForTrump", "Please choose the trump!");
+            HandleEvent("PromptForBuddyAce", "Please choose the buddy ace!");
+            HandleEvent("PromptForCard", "Please play a card!");
             connection.On("UpdatePlayersAtTable", (IEnumerable<string> players) =>
                     TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "UpdatePlayersAtTable")));
             connection.On("ReceiveDealtCards", (IEnumerable<string> cards) =>
-                    TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "ReceiveDealtCards")));
+                    TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "Please take your cards!")));
             connection.On("AnnounceBiddingWinner", (string winner, string bid) =>
                     TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, winner + " wins bidding, " + bid)));
             connection.On("ReceiveChoice", (string chooser, string choice) =>

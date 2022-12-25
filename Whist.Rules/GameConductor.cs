@@ -26,7 +26,17 @@ namespace Whist.Rules
             // TODO(jrgfogh): I haven't yet written the code, which will use these variables:
             _ = await PromptForBuddyAce(winner);
             // TODO(jrgfogh): Exchange cards.
-            _ = new PlayingRound(CreateTrickEvaluator(winningBid, trump[0]));
+            await ConductPlayingRoundAsync(winningBid, trump);
+        }
+
+        private async Task ConductPlayingRoundAsync(string winningBid, string trump)
+        {
+            var round = new PlayingRound(CreateTrickEvaluator(winningBid, trump[0]));
+            int? winner = null;
+            while (winner == null)
+            {
+                winner = round.Play(new Card(await _movePrompter.PromptForCard(round.PlayerToPlay)));
+            }
         }
 
         private async Task<(int Winner, string WinningBid)> ConductBiddingRound()

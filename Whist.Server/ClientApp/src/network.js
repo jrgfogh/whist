@@ -10,14 +10,11 @@ export function connect(client) {
             cards.sort();
             client.receiveDealtCards(cards);
         });
-    connection.on("PromptForBid", () =>
-        {
-            client.promptForBid();
-        });
-    connection.on("PromptForTrump", () =>
-        {
-            client.promptForTrump();
-        });
+    connection.on("AnnounceBiddingWinner", client.receiveBiddingWinner);
+    connection.on("ReceiveChoice", client.receiveChoice);
+    connection.on("PromptForBid", client.promptForBid);
+    connection.on("PromptForTrump", client.promptForTrump);
+    connection.on("PromptForBuddyAce", client.promptForBuddyAce);
     connection.start().then(function() {
         // TODO(jrgfogh): Do something!
     }).catch(function(err) {

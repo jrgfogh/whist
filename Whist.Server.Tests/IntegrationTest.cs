@@ -92,8 +92,8 @@ namespace Whist.Server.Tests
                     TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "UpdatePlayersAtTable")));
             connection.On("ReceiveDealtCards", (IEnumerable<string> cards) =>
                     TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "ReceiveDealtCards")));
-            connection.On("AnnounceWinner", (string user, string bid) =>
-                    TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, user + " wins, " + bid)));
+            connection.On("AnnounceBiddingWinner", (string winner, string bid) =>
+                    TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, winner + " wins bidding, " + bid)));
             connection.On("ReceiveChoice", (string chooser, string choice) =>
                 TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName,
                 chooser + " chooses " + choice)));

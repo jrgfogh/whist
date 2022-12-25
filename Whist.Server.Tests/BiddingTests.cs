@@ -21,7 +21,7 @@ To All: Player C chooses pass
 To Player D: PromptForBid
 Player D: 9 common
 To All: Player D chooses 9 common
-To All: Player D wins, 9 common
+To All: Player D wins bidding, 9 common
 To Player D: PromptForTrump
 Player D: Trump is S
 To All: Player D chooses Trump is S

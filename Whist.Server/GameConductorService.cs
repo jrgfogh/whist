@@ -87,9 +87,9 @@ namespace Whist.Server
             _promise.TrySetResult(choice);
         }
 
-        public async Task AnnounceWinner(string winner, string winningBid)
+        public async Task AnnounceBiddingWinner(string winner, string winningBid)
         {
-            await _hubContext.Clients.All.AnnounceWinner(winner, winningBid);
+            await _hubContext.Clients.All.AnnounceBiddingWinner(winner, winningBid);
         }
 
         public void LeaveTable(string connectionId)

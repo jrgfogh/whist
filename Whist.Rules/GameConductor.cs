@@ -21,7 +21,7 @@ namespace Whist.Rules
         {
             await DealCards();
             var (winner, winningBid) = await ConductBiddingRound();
-            await AnnounceWinner(winner, winningBid);
+            await AnnounceBiddingWinner(winner, winningBid);
             var trump = await PromptForTrump(winner, winningBid);
             // TODO(jrgfogh): I haven't yet written the code, which will use these variables:
             _ = await PromptForBuddyAce(winner);
@@ -37,10 +37,10 @@ namespace Whist.Rules
             return (round.Winner, round.WinningBid!);
         }
 
-        private async Task AnnounceWinner(int winner, string winningBid)
+        private async Task AnnounceBiddingWinner(int winner, string winningBid)
         {
             var playerNames = new[] { "Player A", "Player B", "Player C", "Player D" };
-            await _movePrompter.AnnounceWinner(playerNames[winner], winningBid);
+            await _movePrompter.AnnounceBiddingWinner(playerNames[winner], winningBid);
         }
 
         private async Task DealCards()

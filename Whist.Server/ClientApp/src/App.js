@@ -28,7 +28,15 @@ export default function App(props) {
             },
             promptForTrump: () => {
                 console.log("Please choose trump!");
-                alert("choosing-trump");
+                setGameState("choosing-trump");
+            },
+            promptForBuddyAce: () => {
+                console.log("Please choose buddy ace!");
+                setGameState("choosing-buddy-ace");
+            },
+            receiveBiddingWinner: (winner, bid) => {
+                setGameState("waiting");
+                console.log(winner + " wins bidding, " + bid);
             },
             receiveChoice: (chooser, choice) => {
                 console.log("bids: " + synchronousBids);

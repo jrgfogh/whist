@@ -33,16 +33,84 @@
     transform: translateX(-50%);
 }
 
+.hand .card-l1 {
+    rotate: -7deg;
+    bottom: 24.81365379px;
+}
+
+.hand .card-l2 {
+    rotate: -14deg;
+    bottom: 24.25739316px;
+}
+
+.hand .card-l3 {
+    rotate: -21deg;
+    bottom: 23.33951066px;
+}
+
+.hand .card-l4 {
+    rotate: -28deg;
+    bottom: 22.07368982px;
+}
+
+.hand .card-l5 {
+    rotate: -35deg;
+    bottom: 20.47880111px;
+}
+
+.hand .card-l6 {
+    rotate: -42deg;
+    bottom: 18.57862064px;
+}
+
+.hand .card-0 {
+    rotate: 0deg;
+    bottom: 25px;
+}
+
+.hand .card-r1 {
+    rotate: 7deg;
+    bottom: 24.81365379px;
+}
+
+.hand .card-r2 {
+    rotate: 14deg;
+    bottom: 24.25739316px;
+}
+
+.hand .card-r3 {
+    rotate: 21deg;
+    bottom: 23.33951066px;
+}
+
+.hand .card-r4 {
+    rotate: 28deg;
+    bottom: 22.07368982px;
+}
+
+.hand .card-r5 {
+    rotate: 35deg;
+    bottom: 20.47880111px;
+}
+
+.hand .card-r6 {
+    rotate: 42deg;
+    bottom: 18.57862064px;
+}
+
 .hand {
-    position: absolute;
-    bottom: 20px;
+    position: relative;
+    top: 40px;
+    margin-top: 40px;
+    text-align: center;
     left: 40%;
     -webkit-transform: translateX(-50%);
     transform: translateX(-50%);
+    height: 296px;
 }
 
 .hand .card {
-    margin-right: -180px;
+    margin-right: -200px;
 }
 
 .hand .card.selected {

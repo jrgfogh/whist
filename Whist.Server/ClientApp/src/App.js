@@ -7,20 +7,34 @@ import { connect } from "./network";
 import "./custom.css"
 
 export default function App(props) {
-    const [_, setConnection] = useState(null);
+    const [connection, setConnection] = useState(null);
     const [cardsInHand, setCardsInHand] = useState([]);
+    const [bids, setBids] = useState([]);
+    const [gameState, setGameState] = useState("connecting");
+
+    var synchronousBids = [];
 
     useEffect(() => {
         const newConnection = connect({
             receiveDealtCards: (cards) => {
+                console.log("Received cards:");
                 console.log(cards);
                 setCardsInHand(cards);
+                setGameState("bidding");
             },
             promptForBid: () => {
-                alert("Please bid!");
+                console.log("Please bid!");
+                setGameState("bidding-active");
             },
             promptForTrump: () => {
-                alert("Please choose trump!");
+                console.log("Please choose trump!");
+                alert("choosing-trump");
+            },
+            receiveChoice: (chooser, choice) => {
+                console.log("bids: " + synchronousBids);
+                synchronousBids = synchronousBids.concat(chooser + " bid " + choice);
+                setBids(synchronousBids);
+                console.log(chooser + " chose " + choice)
             }
         });
         setConnection(newConnection);
@@ -30,7 +44,10 @@ export default function App(props) {
       <Layout>
         <Routes>
             <Route exact path="/" element={
-                <Home cardsInHand={cardsInHand}></Home>}>
+                <div>
+                    <h1>{gameState}</h1>
+                    <Home bids={bids} cardsInHand={cardsInHand} connection={connection} setGameState={setGameState} gameState={gameState}></Home>
+                </div>}>
             </Route>
         </Routes>
       </Layout>

@@ -10,6 +10,10 @@ export function connect(client) {
             cards.sort();
             client.receiveDealtCards(cards);
         });
+    connection.on("ReceiveChoice", (chooser, choice) =>
+        {
+            client.receiveChoice(chooser, choice);
+        });
     connection.on("PromptForBid", () =>
         {
             client.promptForBid();

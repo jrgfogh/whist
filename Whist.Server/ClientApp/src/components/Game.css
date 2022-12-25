@@ -7,6 +7,27 @@
     The cards were optimized by Mike Hall with help from Warren Lockhart.
 */
 
+.overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.bidding-dialog {
+    position: fixed;
+    text-align: center;
+    width: 80%;
+    height: 60%;
+    top: 15%;
+    left: 10%;
+    border-radius: 20px;
+    background-color: lightgreen;
+}
+
 .game-background {
     background-color: #067d00;
     background-image: url("https://www.transparenttextures.com/patterns/45-degree-fabric-light.png");

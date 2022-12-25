@@ -3,12 +3,11 @@ import { Routes, Route } from "react-router";
 import { Layout } from "./components/Layout";
 import { Home } from "./components/Home";
 import { connect } from "./network";
-import { useNavigate } from "react-router-dom";
 
 import "./custom.css"
 
 export default function App(props) {
-    const [connection, setConnection] = useState(null);
+    const [_, setConnection] = useState(null);
     const [cardsInHand, setCardsInHand] = useState([]);
 
     useEffect(() => {
@@ -16,6 +15,12 @@ export default function App(props) {
             receiveDealtCards: (cards) => {
                 console.log(cards);
                 setCardsInHand(cards);
+            },
+            promptForBid: () => {
+                alert("Please bid!");
+            },
+            promptForTrump: () => {
+                alert("Please choose trump!");
             }
         });
         setConnection(newConnection);

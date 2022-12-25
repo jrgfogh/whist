@@ -49,9 +49,11 @@
 
 .ace-picker {
     position: absolute;
+    text-align: center;
     left: 50%;
     -webkit-transform: translateX(-50%);
     transform: translateX(-50%);
+    background-color: lightgreen;
 }
 
 .hand .card-l1 {

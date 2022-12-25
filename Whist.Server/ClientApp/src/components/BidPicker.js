@@ -30,8 +30,8 @@ export function BidPicker(props) {
             {range(6, 13).map(element => <th key={element}>{element}</th>)}
           </tr>
           <tr>
-            <th key="head">Regular</th>
-            {buttonRow(" Regular")}
+            <th key="head">Common</th>
+            {buttonRow(" Common")}
           </tr>
           <tr>
             <th key="head">Good</th>

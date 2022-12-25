@@ -53,7 +53,7 @@ namespace Whist.Rules
 
         private async Task<string> PromptForTrump(int winner, string winningBid)
         {
-            if (winningBid.EndsWith("common"))
+            if (winningBid.EndsWith("common", StringComparison.InvariantCultureIgnoreCase))
                 return await _movePrompter.PromptForTrump(winner);
             return "C";
         }

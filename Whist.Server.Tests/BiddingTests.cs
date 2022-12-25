@@ -8,25 +8,25 @@ namespace Whist.Server.Tests
 
         [Test]
         [TestCase(
-@"To All: ReceiveDealtCards
-To Player A: PromptForBid
-Player A: pass
+@"To All: Please take your cards!
+To Player A: Please bid!
+Player A: Pass!
 To All: Player A chooses pass
-To Player B: PromptForBid
-Player B: pass
+To Player B: Please bid!
+Player B: Pass!
 To All: Player B chooses pass
-To Player C: PromptForBid
-Player C: pass
+To Player C: Please bid!
+Player C: Pass!
 To All: Player C chooses pass
-To Player D: PromptForBid
-Player D: 9 common
+To Player D: Please bid!
+Player D: 9 common!
 To All: Player D chooses 9 common
 To All: Player D wins bidding, 9 common
-To Player D: PromptForTrump
-Player D: Trump is S
+To Player D: Please choose the trump!
+Player D: Trump is S!
 To All: Player D chooses Trump is S
-To Player D: PromptForBuddyAce
-Player D: Buddy ace is H
+To Player D: Please choose the buddy ace!
+Player D: Buddy ace is H!
 To All: Player D chooses Buddy ace is H")]
         public async Task BiddingRound(string input)
         {
@@ -37,7 +37,7 @@ To All: Player D chooses Buddy ace is H")]
                     foreach (var (_, player) in TestPlayers)
                     {
                         var actualEvent = player.ReceivedEvents.Take();
-                        Assert.That(actualEvent.Message, Is.EqualTo(expectedEvent.Message));
+                        Assert.That(actualEvent.Message, Is.EqualTo(expectedEvent.Message).IgnoreCase);
                     }
                 }
                 else if (expectedEvent.Sender.StartsWith("To "))
@@ -52,7 +52,9 @@ To All: Player D chooses Buddy ace is H")]
 
         private async Task SendChoice(Event expectedEvent)
         {
-            await GetConnection(expectedEvent.Sender).SendAsync("SendChoice", expectedEvent.Message).ConfigureAwait(false);
+            string message = expectedEvent.Message;
+            message = message.Substring(0, message.Length - 1);
+            await GetConnection(expectedEvent.Sender).SendAsync("SendChoice", message).ConfigureAwait(false);
         }
     }
 }

@@ -34,6 +34,10 @@ export default function App(props) {
                 console.log("Please choose buddy ace!");
                 setGameState("choosing-buddy-ace");
             },
+            promptForCard: () => {
+                console.log("Please play a card!");
+                setGameState("playing");
+            },
             receiveBiddingWinner: (winner, bid) => {
                 setGameState("waiting");
                 console.log(winner + " wins bidding, " + bid);

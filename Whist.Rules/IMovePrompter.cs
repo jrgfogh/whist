@@ -10,5 +10,6 @@ namespace Whist.Rules
         Task<string> PromptForTrump(int winner);
         Task<string> PromptForBuddyAce(int winner);
         Task AnnounceBiddingWinner(string winner, string winningBid);
+        Task<string> PromptForCard(int playerToPlay);
     }
 }

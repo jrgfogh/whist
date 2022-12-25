@@ -9,9 +9,9 @@
         {
             var receivedEvents = TestPlayers["Player A"].ReceivedEvents;
             var gameEvent = receivedEvents.Take();
-            Assert.That(gameEvent, Is.EqualTo(new Event("To Player A", "ReceiveDealtCards")));
+            Assert.That(gameEvent, Is.EqualTo(new Event("To Player A", "Please take your cards!")));
             gameEvent = receivedEvents.Take();
-            Assert.That(gameEvent, Is.EqualTo(new Event("To Player A", "PromptForBid")));
+            Assert.That(gameEvent, Is.EqualTo(new Event("To Player A", "Please bid!")));
         }
     }
 }

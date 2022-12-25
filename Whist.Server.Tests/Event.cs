@@ -16,7 +16,7 @@
         {
             return obj is Event @event &&
                    Sender == @event.Sender &&
-                   Message == @event.Message;
+                   string.Compare(Message, @event.Message, true) == 0;
         }
 
         public override int GetHashCode()

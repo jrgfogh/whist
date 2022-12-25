@@ -8,6 +8,7 @@ namespace Whist.Server
         Task PromptForBid();
         Task PromptForTrump();
         Task PromptForBuddyAce();
+        Task PromptForCard();
         Task ReceiveDealtCards(IEnumerable<string> cards);
         Task ReceiveChoice(string chooser, string choice);
         Task AnnounceBiddingWinner(string winner, string winningBid);

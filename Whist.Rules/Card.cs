@@ -35,7 +35,7 @@ namespace Whist.Rules
 
         public override int GetHashCode()
         {
-            return _name.GetHashCode();
+            return _name.GetHashCode(StringComparison.OrdinalIgnoreCase);
         }
 
         public static bool operator ==(Card left, Card right)

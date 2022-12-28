@@ -31,12 +31,17 @@ namespace Whist.Rules
 
         private async Task ConductPlayingRoundAsync(string winningBid, string trump)
         {
-            var round = new PlayingRound(CreateTrickEvaluator(winningBid, trump[0]));
+            var round = new PlayingRound(CreateTrickEvaluator(winningBid, trump.Last()));
+            var winner = await PlayTrick(round);
+            await AnnounceWinnerAsync(winner);
+        }
+
+        private async Task<int> PlayTrick(PlayingRound round)
+        {
             int? winner = null;
             while (winner == null)
-            {
                 winner = round.Play(new Card(await _movePrompter.PromptForCard(round.PlayerToPlay)));
-            }
+            return (int)winner;
         }
 
         private async Task<(int Winner, string WinningBid)> ConductBiddingRound()
@@ -47,11 +52,11 @@ namespace Whist.Rules
             return (round.Winner, round.WinningBid!);
         }
 
-        private async Task AnnounceBiddingWinner(int winner, string winningBid)
-        {
-            var playerNames = new[] { "Player A", "Player B", "Player C", "Player D" };
-            await _movePrompter.AnnounceBiddingWinner(playerNames[winner], winningBid);
-        }
+        private async Task AnnounceWinnerAsync(int winner) =>
+            await _movePrompter.AnnounceWinner(PlayerName(winner));
+
+        private async Task AnnounceBiddingWinner(int winner, string winningBid) =>
+            await _movePrompter.AnnounceBiddingWinner(PlayerName(winner), winningBid);
 
         private async Task DealCards()
         {
@@ -68,15 +73,13 @@ namespace Whist.Rules
             return "C";
         }
 
-        private async Task<string> PromptForBuddyAce(int winner)
-        {
-            return await _movePrompter.PromptForBuddyAce(winner);
-        }
+        private async Task<string> PromptForBuddyAce(int winner) =>
+            await _movePrompter.PromptForBuddyAce(winner);
 
         // TODO(jrgfogh): Move this factory method.
         private static TrickEvaluator CreateTrickEvaluator(string winningBid, char trump)
         {
-            var bidKind = winningBid.Split(' ')[1];
+            var bidKind = winningBid.Split(' ')[1].ToLowerInvariant();
             return bidKind switch
             {
                 // ReSharper disable once PossibleInvalidOperationException
@@ -86,6 +89,12 @@ namespace Whist.Rules
                 "solo" => new SoloTrickEvaluator(),
                 _ => throw new Exception($"Invalid bid: {winningBid}.")
             };
+        }
+
+        private static string PlayerName(int playerIndex)
+        {
+            var playerNames = new[] { "Player A", "Player B", "Player C", "Player D" };
+            return playerNames[playerIndex];
         }
     }
 }

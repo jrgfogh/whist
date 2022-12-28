@@ -8,7 +8,7 @@
 
         public void Bid(string bid)
         {
-            if (bid.Equals("pass", System.StringComparison.InvariantCultureIgnoreCase))
+            if (bid.Equals("pass", System.StringComparison.OrdinalIgnoreCase))
             {
                 if (_playerAsTurn) _playerA = _playerB;
                 _playerB++;

@@ -48,7 +48,7 @@ export function BidPicker(props) {
         </tbody>
       </table>
       <div>
-        {props.bids.map((bid, index) => <p key={index}>{bid}</p>)}
+        {props.bids.map((bid, index) => <p key={bid}>{bid}</p>)}
       </div>
     </div>
   </div>;

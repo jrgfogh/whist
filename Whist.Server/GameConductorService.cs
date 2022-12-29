@@ -26,6 +26,7 @@ namespace Whist.Server
         public override void Dispose()
         {
             _cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Dispose();
             base.Dispose();
         }
 
@@ -72,8 +73,8 @@ namespace Whist.Server
             await GetClient(winner).PromptForBuddyAce();
             var receivedBuddyAce = await _promise.Task;
             // TODO(jrgfogh): Test this!
-            if (!receivedBuddyAce.StartsWith("Buddy ace is "))
-                throw new Exception("Received unexpected buddy ace message: " + receivedBuddyAce);
+            if (!receivedBuddyAce.StartsWith("Buddy ace is ", StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("Received unexpected buddy ace message: " + receivedBuddyAce);
             return receivedBuddyAce;
         }
 
@@ -92,6 +93,11 @@ namespace Whist.Server
         public void ReceiveChoice(string choice)
         {
             _promise.TrySetResult(choice);
+        }
+
+        public async Task AnnounceWinner(string winner)
+        {
+            await _hubContext.Clients.All.AnnounceWinner(winner);
         }
 
         public async Task AnnounceBiddingWinner(string winner, string winningBid)

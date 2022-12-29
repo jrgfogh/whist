@@ -3,12 +3,13 @@ import Card from "./Card.js";
 
 function clickCard(cardName)
 {
+    // TODO(JRGF): Implement this!
 }
 
 export default function Cat(props) {
     let cards = [];
-    for (let i = 0; i < props.cards.length; i++)
-        cards.push(<Card key={props.cards[i]} name={props.cards[i]} clickCard={clickCard}></Card>);
+    for (const card of props.cards)
+        cards.push(<Card key={card} name={props.cards[i]} clickCard={clickCard}></Card>);
     return (<div className="cat">
         { cards }
         </div>);

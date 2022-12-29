@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Routes, Route } from "react-router";
 import { Layout } from "./components/Layout";
 import { Home } from "./components/Home";
@@ -10,9 +10,11 @@ export default function App(props) {
     const [connection, setConnection] = useState(null);
     const [cardsInHand, setCardsInHand] = useState([]);
     const [bids, setBids] = useState([]);
+    const [currentTrick, setCurrentTrick] = useState([]);
     const [gameState, setGameState] = useState("connecting");
 
-    var synchronousBids = [];
+    const synchronousBids = useRef([]);
+    const synchronousTrick = useRef([]);
 
     useEffect(() => {
         const newConnection = connect({
@@ -28,25 +30,33 @@ export default function App(props) {
             },
             promptForTrump: () => {
                 console.log("Please choose trump!");
-                setGameState("choosing-trump");
+                setGameState("bidding-choosing-trump");
             },
             promptForBuddyAce: () => {
                 console.log("Please choose buddy ace!");
-                setGameState("choosing-buddy-ace");
+                setGameState("bidding-choosing-buddy-ace");
             },
             promptForCard: () => {
                 console.log("Please play a card!");
-                setGameState("playing");
+                setGameState("playing-choosing-card");
             },
             receiveBiddingWinner: (winner, bid) => {
-                setGameState("waiting");
+                setGameState("playing");
                 console.log(winner + " wins bidding, " + bid);
             },
             receiveChoice: (chooser, choice) => {
-                console.log("bids: " + synchronousBids);
-                synchronousBids = synchronousBids.concat(chooser + " bid " + choice);
-                setBids(synchronousBids);
-                console.log(chooser + " chose " + choice)
+                console.log("gameState: " + gameState);
+                if (gameState.startsWith("bidding")) {
+                    console.log("bids: " + synchronousBids.current);
+                    synchronousBids.current = synchronousBids.current.concat(chooser + " bid " + choice);
+                    setBids(synchronousBids.current);
+                    console.log(chooser + " bids " + choice);
+                }
+                else {
+                    synchronousTrick.current = synchronousTrick.current.concat(choice);
+                    setCurrentTrick(synchronousTrick.current);
+                    console.log(chooser + " played " + choice);
+                }
             }
         });
         setConnection(newConnection);
@@ -58,7 +68,7 @@ export default function App(props) {
             <Route exact path="/" element={
                 <div>
                     <h1>{gameState}</h1>
-                    <Home bids={bids} cardsInHand={cardsInHand} connection={connection} setGameState={setGameState} gameState={gameState}></Home>
+                    <Home bids={bids} currentTrick={currentTrick} cardsInHand={cardsInHand} connection={connection} setGameState={setGameState} gameState={gameState}></Home>
                 </div>}>
             </Route>
         </Routes>

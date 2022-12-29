@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Routes, Route } from "react-router";
 import { Layout } from "./components/Layout";
 import { Home } from "./components/Home";
@@ -17,12 +17,12 @@ export default function App(props) {
     const trickRef = useRef([]);
     const gameStateRef = useRef([]);
 
-    function setGameState(newState) {
+    const setGameState = useCallback((newState) => {
         setGameState0(newState);
         gameStateRef.current = newState;
-    }
+    });
 
-    async function playCard(card) {
+    const playCard = useCallback(async (card) => {
         setGameState("playing");
         console.log(`Played card: ${card}`);
         setCardsInHand(cards => {
@@ -34,7 +34,7 @@ export default function App(props) {
             return cards;
         });
         await connection.invoke("SendChoice", card);
-    }
+    }, [connection]);
 
     useEffect(() => {
         const newConnection = connect({

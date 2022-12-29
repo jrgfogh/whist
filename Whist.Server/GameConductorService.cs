@@ -105,6 +105,11 @@ namespace Whist.Server
             await _hubContext.Clients.All.AnnounceBiddingWinner(winner, winningBid);
         }
 
+        public async Task StartPlaying()
+        {
+            await _hubContext.Clients.All.StartPlaying();
+        }
+
         public void LeaveTable(string connectionId)
         {
             lock (_connectionIdsSyncLock)

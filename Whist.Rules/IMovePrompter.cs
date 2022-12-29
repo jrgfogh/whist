@@ -12,5 +12,6 @@ namespace Whist.Rules
         Task<string> PromptForCard(int playerToPlay);
         Task AnnounceWinner(string winner);
         Task AnnounceBiddingWinner(string winner, string winningBid);
+        Task StartPlaying();
     }
 }

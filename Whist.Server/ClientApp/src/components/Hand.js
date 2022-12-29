@@ -7,8 +7,8 @@ function cardPosition(size, index)
     if (index === mid)
         return "card-0";
     if (index > mid)
-        return "card-r" + (index - mid);
-    return "card-l" + (mid - index);
+        return `card-r${index - mid}`;
+    return `card-l${mid - index}`;
 }
 
 export default class Hand extends React.Component {

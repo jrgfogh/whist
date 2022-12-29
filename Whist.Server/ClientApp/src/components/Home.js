@@ -7,15 +7,15 @@ function modalDialog(props)
 {
   async function chooseAce(card) {
     props.setGameState("waiting");
-    console.log("The buddy ace is " + card + ".");
-    await props.connection.invoke("SendChoice", "Buddy ace is " + card);
+    console.log(`The buddy ace is ${card}.`);
+    await props.connection.invoke("SendChoice", `Buddy ace is ${card}`);
   }
 
   async function chooseTrump(card) {
     props.setGameState("waiting");
     const trump = card[0];
-    console.log("The trump is " + trump + ".");
-    await props.connection.invoke("SendChoice", "Trump is " + trump);
+    console.log(`The trump is ${trump}.`);
+    await props.connection.invoke("SendChoice", `Trump is ${trump}`);
   }
 
   if (props.gameState.endsWith("choosing-trump"))
@@ -33,18 +33,11 @@ function modalDialog(props)
 }
 
 export function Home(props) {
-
-  async function playCard(card) {
-    props.setGameState("waiting");
-    console.log("Played card: " + card);
-    await props.connection.invoke("SendChoice", card);
-  }
-
   return (
       <div className="game-background">
         <Hand cards={props.currentTrick} />
         <Hand cards={props.cardsInHand} playing={props.gameState === "playing-choosing-card"}
-          playCard={playCard} />
+          playCard={props.playCard} />
         {modalDialog(props)}
       </div>
     );

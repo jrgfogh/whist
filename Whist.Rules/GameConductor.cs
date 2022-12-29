@@ -31,6 +31,7 @@ namespace Whist.Rules
 
         private async Task ConductPlayingRoundAsync(string winningBid, string trump)
         {
+            await _movePrompter.StartPlaying();
             var round = new PlayingRound(CreateTrickEvaluator(winningBid, trump.Last()));
             var winner = await PlayTrick(round);
             await AnnounceWinnerAsync(winner);

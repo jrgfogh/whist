@@ -16,6 +16,7 @@ export function connect(client) {
     connection.on("PromptForTrump", client.promptForTrump);
     connection.on("PromptForBuddyAce", client.promptForBuddyAce);
     connection.on("PromptForCard", client.promptForCard);
+    connection.on("StartPlaying", client.startPlaying);
     connection.start().then(function() {
         // TODO(jrgfogh): Do something!
     }).catch(function(err) {

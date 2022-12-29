@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Routes, Route } from "react-router";
 import { Layout } from "./components/Layout";
 import { Home } from "./components/Home";
@@ -13,8 +13,8 @@ export default function App(props) {
     const [currentTrick, setCurrentTrick] = useState([]);
     const [gameState, setGameState] = useState("connecting");
 
-    var synchronousBids = [];
-    var synchronousTrick = [];
+    const synchronousBids = useRef([]);
+    const synchronousTrick = useRef([]);
 
     useEffect(() => {
         const newConnection = connect({
@@ -47,14 +47,14 @@ export default function App(props) {
             receiveChoice: (chooser, choice) => {
                 console.log("gameState: " + gameState);
                 if (gameState.startsWith("bidding")) {
-                    console.log("bids: " + synchronousBids);
-                    synchronousBids = synchronousBids.concat(chooser + " bid " + choice);
-                    setBids(synchronousBids);
+                    console.log("bids: " + synchronousBids.current);
+                    synchronousBids.current = synchronousBids.current.concat(chooser + " bid " + choice);
+                    setBids(synchronousBids.current);
                     console.log(chooser + " bids " + choice);
                 }
                 else {
-                    synchronousTrick = synchronousTrick.concat(choice);
-                    setCurrentTrick(synchronousTrick);
+                    synchronousTrick.current = synchronousTrick.current.concat(choice);
+                    setCurrentTrick(synchronousTrick.current);
                     console.log(chooser + " played " + choice);
                 }
             }

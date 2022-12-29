@@ -33,18 +33,11 @@ function modalDialog(props)
 }
 
 export function Home(props) {
-
-  async function playCard(card) {
-    props.setGameState("waiting");
-    console.log("Played card: " + card);
-    await props.connection.invoke("SendChoice", card);
-  }
-
   return (
       <div className="game-background">
         <Hand cards={props.currentTrick} />
         <Hand cards={props.cardsInHand} playing={props.gameState === "playing-choosing-card"}
-          playCard={playCard} />
+          playCard={props.playCard} />
         {modalDialog(props)}
       </div>
     );

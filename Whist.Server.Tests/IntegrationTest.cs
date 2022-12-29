@@ -88,6 +88,7 @@ namespace Whist.Server.Tests
             HandleEvent("PromptForTrump", "Please choose the trump!");
             HandleEvent("PromptForBuddyAce", "Please choose the buddy ace!");
             HandleEvent("PromptForCard", "Please play a card!");
+            HandleEvent("StartPlaying", "Start playing!");
             connection.On("UpdatePlayersAtTable", (IEnumerable<string> players) =>
                     TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "UpdatePlayersAtTable")));
             connection.On("ReceiveDealtCards", (IEnumerable<string> cards) =>

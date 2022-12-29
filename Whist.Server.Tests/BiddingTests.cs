@@ -27,7 +27,8 @@ Player D: Trump is S!
 To All: Player D chooses Trump is S
 To Player D: Please choose the buddy ace!
 Player D: Buddy ace is H!
-To All: Player D chooses Buddy ace is H")]
+To All: Player D chooses Buddy ace is H
+To All: Start playing!")]
         public async Task BiddingRound(string input)
         {
             foreach (var expectedEvent in ParseEvents(input))

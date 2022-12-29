@@ -7,15 +7,15 @@ function modalDialog(props)
 {
   async function chooseAce(card) {
     props.setGameState("waiting");
-    console.log("The buddy ace is " + card + ".");
-    await props.connection.invoke("SendChoice", "Buddy ace is " + card);
+    console.log(`The buddy ace is ${card}.`);
+    await props.connection.invoke("SendChoice", `Buddy ace is ${card}`);
   }
 
   async function chooseTrump(card) {
     props.setGameState("waiting");
     const trump = card[0];
-    console.log("The trump is " + trump + ".");
-    await props.connection.invoke("SendChoice", "Trump is " + trump);
+    console.log(`The trump is ${trump}.`);
+    await props.connection.invoke("SendChoice", `Trump is ${trump}`);
   }
 
   if (props.gameState.endsWith("choosing-trump"))

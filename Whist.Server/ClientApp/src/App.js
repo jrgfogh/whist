@@ -24,7 +24,7 @@ export default function App(props) {
 
     async function playCard(card) {
         setGameState("playing");
-        console.log("Played card: " + card);
+        console.log(`Played card: ${card}`);
         setCardsInHand(cards => {
             const index = cards.indexOf(card);
             if (index !== -1)
@@ -68,9 +68,9 @@ export default function App(props) {
                 console.log(winner + " wins bidding, " + bid);
             },
             receiveChoice: (chooser, choice) => {
-                console.log("gameState: " + gameStateRef.current);
+                console.log(`gameState: ${gameStateRef.current}`);
                 if (gameStateRef.current.startsWith("bidding")) {
-                    console.log("bids: " + bidsRef.current);
+                    console.log(`bids: ${bidsRef.current}`);
                     bidsRef.current = bidsRef.current.concat(chooser + " bid " + choice);
                     setBids(bidsRef.current);
                     console.log(chooser + " bids " + choice);

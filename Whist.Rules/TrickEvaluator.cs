@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Whist.Rules
 {
@@ -9,9 +10,9 @@ namespace Whist.Rules
             if (cards[0].IsJoker)
                 return 0;
             var result = 0;
-            for (var i = 1; i < 4; i++)
-                if (IsCandidateBetterThanCurrentBest(cards[i], cards[result]))
-                    result = i;
+            foreach (var (card, index) in cards.Select((card, index) => (card, index)))
+                if (IsCandidateBetterThanCurrentBest(card, cards[result]))
+                    result = index;
             return result;
         }
 

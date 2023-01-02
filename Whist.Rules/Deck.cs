@@ -19,12 +19,11 @@ namespace Whist.Rules
             foreach (var suit in new[] { "S", "H", "C", "D" })
             {
                 result.AddRange(Enumerable.Range(1, 10).Select(number =>
-                    new Card(suit + number)));
+                    Card.CreateInstance(suit + number))!);
                 result.AddRange(new[] { "J", "Q", "K" }.Select(rank =>
-                    new Card(suit + rank)));
+                    Card.CreateInstance(suit + rank))!);
             }
-            result.AddRange(new[] { "Joker", "Joker", "Joker" }.Select(cardName =>
-                new Card(cardName)));
+            result.AddRange(new[] { "Joker", "Joker", "Joker" }.Select(Card.CreateInstance)!);
 
             return result;
         }

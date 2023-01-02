@@ -5,8 +5,8 @@ namespace Whist.Server
     public sealed class KeyAndText
     {
         [JsonInclude]
-        public string Key;
+        public string? Key;
         [JsonInclude]
-        public string Text;
+        public string? Text;
     }
 }

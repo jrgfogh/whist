@@ -12,7 +12,7 @@ namespace Whist.Server
     public sealed class GameConductorService : BackgroundService, IMovePrompter
     {
         private readonly IHubContext<WhistHub, IWhistClient> _hubContext;
-        private TaskCompletionSource<string> _promise;
+        private TaskCompletionSource<string> _promise = null!;
         private readonly CancellationTokenSource _cancellationTokenSource;
         private readonly object _connectionIdsSyncLock = new();
         private readonly List<string> _connectionIdsAtTable = new();

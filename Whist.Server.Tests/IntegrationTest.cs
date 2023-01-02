@@ -46,7 +46,7 @@ namespace Whist.Server.Tests
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
             Environment.CurrentDirectory = ServerPath();
-            _host = Program.CreateHostBuilder(null)
+            _host = Program.CreateHostBuilder(Array.Empty<string>())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseKestrel();

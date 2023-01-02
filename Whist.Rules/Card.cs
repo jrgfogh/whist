@@ -21,7 +21,12 @@ namespace Whist.Rules
                 _ => int.Parse(_name[1..])
             };
 
-        public Card(string name) => _name = name ?? throw new ArgumentNullException(nameof(name));
+        private Card(string name) => _name = name;
+
+        public static Card? CreateInstance(string name)
+        {
+            return name == "pass" ? null : new Card(name);
+        }
 
         private bool Equals(Card other)
         {
@@ -38,12 +43,12 @@ namespace Whist.Rules
             return _name.GetHashCode(StringComparison.OrdinalIgnoreCase);
         }
 
-        public static bool operator ==(Card left, Card right)
+        public static bool operator ==(Card? left, Card? right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Card left, Card right)
+        public static bool operator !=(Card? left, Card? right)
         {
             return !Equals(left, right);
         }

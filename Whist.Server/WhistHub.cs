@@ -19,7 +19,7 @@ namespace Whist.Server
             await base.OnConnectedAsync();
         }
 
-        public override async Task OnDisconnectedAsync(Exception exception)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
             _gameConductorService.LeaveTable(Context.ConnectionId);
             await base.OnDisconnectedAsync(exception);

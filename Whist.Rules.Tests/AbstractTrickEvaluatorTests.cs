@@ -1,5 +1,7 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using System.Linq;
+using System;
 
 namespace Whist.Rules.Tests
 {
@@ -7,7 +9,8 @@ namespace Whist.Rules.Tests
     {
         public static void TestEvaluateTrick(TrickEvaluator trickEvaluator, string cardsPlayed, int winnerIndex)
         {
-            var cards = cardsPlayed.Split(' ').Select(c => new Card(c)).ToArray();
+            var cards = cardsPlayed.Split(' ')
+                .Select((cardName, index) => (Card.CreateInstance(cardName)!, index)).ToArray();
             Assert.That(trickEvaluator.EvaluateTrick(cards), Is.EqualTo(winnerIndex));
         }
     }

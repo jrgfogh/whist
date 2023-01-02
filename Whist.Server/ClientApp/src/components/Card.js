@@ -1,10 +1,12 @@
-﻿import React from "react";
+﻿import React, { useCallback } from "react";
 
 export default function Card(props) {
+    const clickCard = useCallback(() => props.clickCard(props.name), [props.clickCard, props.name]);
+    const doubleClickCard = useCallback(() => props.doubleClickCard(props.name), [propps.doubleClickCard, props.name]);
     let className = `card ${props.name} ${props.position}`;
     if (props.selected)
         className = className + " selected";
     return (<div className={className}
-        onClick={() => props.clickCard(props.name)}
-        onDoubleClick={() => props.doubleClickCard(props.name)}></div>);
+        onClick={clickCard}
+        onDoubleClick={doubleClickCard}></div>);
 }

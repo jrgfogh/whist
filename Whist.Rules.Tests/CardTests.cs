@@ -10,21 +10,23 @@ namespace Whist.Rules.Tests
         public void EqualityOperatorsIdenticalCards(string cardName)
         {
             // ReSharper disable once EqualExpressionComparison
-            Assert.That(new Card(cardName) == new Card(cardName));
+            Assert.That(Card.CreateInstance(cardName) == Card.CreateInstance(cardName));
             // ReSharper disable once EqualExpressionComparison
-            Assert.That(Equals(new Card(cardName), new Card(cardName)));
+            Assert.That(Equals(Card.CreateInstance(cardName), Card.CreateInstance(cardName)));
             // ReSharper disable once EqualExpressionComparison
-            Assert.That(new Card(cardName) != new Card(cardName), Is.False);
+            Assert.That(Card.CreateInstance(cardName) != Card.CreateInstance(cardName), Is.False);
         }
 
         [Test]
         [TestCase("S5", "C2")]
         [TestCase("H7", "D3")]
+        [TestCase("H7", "pass")]
+        [TestCase("pass", "D3")]
         public void EqualityOperatorsDifferentCards(string left, string right)
         {
-            Assert.That(new Card(left) == new Card(right), Is.False);
-            Assert.That(Equals(new Card(left), new Card(right)), Is.False);
-            Assert.That(new Card(left) != new Card(right));
+            Assert.That(Card.CreateInstance(left) == Card.CreateInstance(right), Is.False);
+            Assert.That(Equals(Card.CreateInstance(left), Card.CreateInstance(right)), Is.False);
+            Assert.That(Card.CreateInstance(left) != Card.CreateInstance(right));
         }
     }
 }

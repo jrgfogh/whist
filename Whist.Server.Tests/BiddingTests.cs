@@ -33,14 +33,14 @@ To Player A: Please play a card!
 Player A: H3
 To All: Player A chooses H3
 To Player B: Please play a card!
-Player B: pass
-To All: Player B chooses pass
+Player B: C2
+To All: Player B chooses C2
 To Player C: Please play a card!
-Player C: pass
-To All: Player C chooses pass
+Player C: D5
+To All: Player C chooses D5
 To Player D: Please play a card!
-Player D: pass
-To All: Player D chooses pass
+Player D: H2
+To All: Player D chooses H2
 To All: Player A wins the trick")]
         public async Task BiddingRound(string input)
         {

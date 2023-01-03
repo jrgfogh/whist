@@ -41,7 +41,7 @@ namespace Whist.Rules
         {
             int? winner = null;
             while (winner == null)
-                winner = round.Play(Card.CreateInstance(await _movePrompter.PromptForCard(round.PlayerToPlay)));
+                winner = round.Play(new Card(await _movePrompter.PromptForCard(round.PlayerToPlay)));
             return (int)winner;
         }
 

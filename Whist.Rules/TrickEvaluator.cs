@@ -5,14 +5,14 @@ namespace Whist.Rules
 {
     public abstract class TrickEvaluator
     {
-        public int EvaluateTrick(IEnumerable<(Card, int)> cards)
+        public int EvaluateTrick(IList<Card> cards)
         {
-            if (cards.First().Item1.IsJoker)
+            if (cards[0].IsJoker)
                 return 0;
-            var (currentBest, result) = cards.First();
-            foreach (var (card, index) in cards)
-                if (IsCandidateBetterThanCurrentBest(card, currentBest))
-                    (currentBest, result) = (card, index);
+            var result = 0;
+            foreach (var (card, index) in cards.Select((card, index) => (card, index)))
+                if (IsCandidateBetterThanCurrentBest(card, cards[result]))
+                    result = index;
             return result;
         }
 

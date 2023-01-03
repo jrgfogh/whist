@@ -26,13 +26,11 @@ export default function App(props) {
         setGameState("playing");
         console.log(`Played card: ${card}`);
         setCardsInHand(cards => {
-            if (card !== "pass") {
-                const index = cards.indexOf(card);
-                if (index !== -1)
-                    cards.splice(index, 1);
-                else
-                    throw new Error("Error: Tried to play a card not in the hand!");
-            }
+            const index = cards.indexOf(card);
+            if (index !== -1)
+                cards.splice(index, 1);
+            else
+                throw new Error("Error: Tried to play a card not in the hand!");
             return cards;
         });
         await connection.invoke("SendChoice", card);
@@ -82,12 +80,9 @@ export default function App(props) {
                     console.log(chooser + " bids " + choice);
                 }
                 else if (gameStateRef.current.startsWith("playing")) {
-                    if (choice !== "pass") {
-                        trickRef.current = trickRef.current.concat(choice);
-                        setCurrentTrick(trickRef.current);
-                        console.log(chooser + " played " + choice + ".");
-                    } else
-                        console.log(chooser + " passed.");
+                    trickRef.current = trickRef.current.concat(choice);
+                    setCurrentTrick(trickRef.current);
+                    console.log(chooser + " played " + choice + ".");
                 }
                 else {
                     console.log(chooser + " chose " + choice + " in state: " + gameStateRef.current);

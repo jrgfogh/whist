@@ -56,12 +56,6 @@
     background-color: lightgreen;
 }
 
-.pass-button {
-    position: absolute;
-    left: 90%;
-    padding: 20px 50px;
-}
-
 .hand .card-l1 {
     rotate: -7deg;
     bottom: 24.81365379px;

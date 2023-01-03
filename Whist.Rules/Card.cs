@@ -21,12 +21,7 @@ namespace Whist.Rules
                 _ => int.Parse(_name[1..])
             };
 
-        private Card(string name) => _name = name;
-
-        public static Card? CreateInstance(string name)
-        {
-            return name == "pass" ? null : new Card(name);
-        }
+        public Card(string name) => _name = name ?? throw new ArgumentNullException(nameof(name));
 
         private bool Equals(Card other)
         {

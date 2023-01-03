@@ -1,37 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Whist.Rules
 {
     public sealed class PlayingRound
     {
         private readonly TrickEvaluator _evaluator;
-        private readonly List<(Card, int)> _cardsInTrick = new();
-        private readonly bool[] _isStillIn = {true, true, true, true};
+        private readonly List<Card> _cardsInTrick = new();
 
         public PlayingRound(TrickEvaluator evaluator)
         {
             _evaluator = evaluator;
         }
 
-        public int? Play(Card? card)
+        public int? Play(Card card)
         {
-            if (!_isStillIn[PlayerToPlay])
-                throw new InvalidOperationException("A card was played after the round ended.");
-            if (card == null)
-                _isStillIn[PlayerToPlay] = false;
-            else
-                _cardsInTrick.Add((card, PlayerToPlay));
-            var playersRemaining = _isStillIn.Count(isIn => isIn);
-            if (playersRemaining == 0)
-                throw new InvalidOperationException("A card was played after the round ended.");
-            if (playersRemaining == 1 && _cardsInTrick.Count > 0)
+            _cardsInTrick.Add(card);
+            if (_cardsInTrick.Count == 4)
                 return WinnerTakesTrick();
-            do
-            {
-                PlayerToPlay = (PlayerToPlay + 1) % 4;
-            } while (!_isStillIn[PlayerToPlay]);
+            PlayerToPlay = (PlayerToPlay + 1) % 4;
             return null;
         }
 
@@ -39,6 +25,7 @@ namespace Whist.Rules
         {
             var winner = _evaluator.EvaluateTrick(_cardsInTrick);
             _cardsInTrick.Clear();
+            PlayerToPlay = winner;
             return winner;
         }
 

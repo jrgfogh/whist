@@ -95,6 +95,8 @@ namespace Whist.Server.Tests
                     TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "Please take your cards!")));
             connection.On("AnnounceBiddingWinner", (string winner, string bid) =>
                     TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, winner + " wins bidding, " + bid)));
+            connection.On("AnnounceWinner", (string winner) =>
+                    TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, winner + " wins the trick")));
             connection.On("ReceiveChoice", (string chooser, string choice) =>
                 TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName,
                 chooser + " chooses " + choice)));
@@ -104,5 +106,15 @@ namespace Whist.Server.Tests
 
         protected HubConnection GetConnection(string sender) =>
             TestPlayers[sender].Connection;
+
+        protected async Task SendChoice(Event expectedEvent)
+        {
+            await GetConnection(expectedEvent.Sender).SendAsync("SendChoice", TrimMessage(expectedEvent)).ConfigureAwait(false);
+        }
+
+        private static string TrimMessage(Event expectedEvent)
+        {
+            return expectedEvent.Message.TrimEnd('!');
+        }
     }
 }

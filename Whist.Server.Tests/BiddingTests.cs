@@ -4,7 +4,7 @@ namespace Whist.Server.Tests
 {
     public class BiddingTests : IntegrationTest
     {
-        protected override string TestUrl { get; } = "http://localhost:5000";
+        protected override string TestUrl => "http://localhost:5000";
 
         [Test]
         [TestCase(
@@ -28,7 +28,20 @@ To All: Player D chooses Trump is S
 To Player D: Please choose the buddy ace!
 Player D: Buddy ace is H!
 To All: Player D chooses Buddy ace is H
-To All: Start playing!")]
+To All: Start playing!
+To Player A: Please play a card!
+Player A: H3
+To All: Player A chooses H3
+To Player B: Please play a card!
+Player B: pass
+To All: Player B chooses pass
+To Player C: Please play a card!
+Player C: pass
+To All: Player C chooses pass
+To Player D: Please play a card!
+Player D: pass
+To All: Player D chooses pass
+To All: Player A wins the trick")]
         public async Task BiddingRound(string input)
         {
             foreach (var expectedEvent in ParseEvents(input))
@@ -49,13 +62,6 @@ To All: Start playing!")]
                 else
                     await SendChoice(expectedEvent);
             }
-        }
-
-        private async Task SendChoice(Event expectedEvent)
-        {
-            string message = expectedEvent.Message;
-            message = message.Substring(0, message.Length - 1);
-            await GetConnection(expectedEvent.Sender).SendAsync("SendChoice", message).ConfigureAwait(false);
         }
     }
 }

@@ -50,6 +50,8 @@ export default class Hand extends React.Component {
                             name={cardName} clickCard={() => this.clickCard(cardName)}
                             doubleClickCard={() => this.doubleClickCard(cardName)}
                             selected={this.state.selected === cardName} />)}
+                {this.props.playing &&
+                    <button className="pass-button" type="button" onClick={() => this.props.playCard("pass")}>Pass!</button>}
             </div>);
     }
 }

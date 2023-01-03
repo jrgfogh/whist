@@ -69,6 +69,10 @@ export default function App(props) {
             receiveBiddingWinner: (winner, bid) => {
                 console.log(winner + " wins bidding with " + bid + ".");
             },
+            receiveWinner: (winner) => {
+                alert(winner + " wins the trick.");
+                console.log(winner + " wins the trick.");
+            },
             receiveChoice: (chooser, choice) => {
                 console.log(`gameState: ${gameStateRef.current}`);
                 if (gameStateRef.current.startsWith("bidding")) {

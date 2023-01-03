@@ -5,12 +5,9 @@ export function connect(client) {
         .configureLogging(signalR.LogLevel.Information)
         .withUrl("/WhistHub")
         .build();
-    connection.on("ReceiveDealtCards", (cards) =>
-        {
-            cards.sort();
-            client.receiveDealtCards(cards);
-        });
+    connection.on("ReceiveDealtCards", client.receiveDealtCards);
     connection.on("AnnounceBiddingWinner", client.receiveBiddingWinner);
+    connection.on("AnnounceWinner", client.receiveWinner);
     connection.on("ReceiveChoice", client.receiveChoice);
     connection.on("PromptForBid", client.promptForBid);
     connection.on("PromptForTrump", client.promptForTrump);

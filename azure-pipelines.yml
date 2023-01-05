@@ -28,7 +28,8 @@ stages:
     - task: PublishTestResults@2
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: '**/junit.xml' # string. Required. Test results files. Default: **/TEST-*.xml.
+        testResultsFiles: '**/junit.xml'
+        failTaskOnFailedTests: true
     - task: DotNetCoreCLI@2
       displayName: Bundle as .zip
       inputs:

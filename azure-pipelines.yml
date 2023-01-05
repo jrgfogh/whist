@@ -18,7 +18,13 @@ stages:
         command: test
         projects: '**/*Tests/*.csproj'
         arguments: '--configuration $(buildConfiguration) --blame-hang-timeout 1m'
-      displayName: 'Run tests'
+      displayName: 'Run .NET tests'
+    - script: |
+        npm install
+        npm test
+        npm prune --production
+      displayName: 'Run JS tests'
+      workingDirectory: 'Whist.Server/ClientApp'
     - task: DotNetCoreCLI@2
       displayName: Bundle as .zip
       inputs:

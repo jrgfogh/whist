@@ -25,6 +25,10 @@ stages:
         npm prune --production
       displayName: 'Run JS tests'
       workingDirectory: 'Whist.Server/ClientApp'
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/junit.xml' # string. Required. Test results files. Default: **/TEST-*.xml.
     - task: DotNetCoreCLI@2
       displayName: Bundle as .zip
       inputs:

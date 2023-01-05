@@ -21,6 +21,7 @@ stages:
       displayName: 'Run .NET tests'
     - script: npm test
       displayName: 'Run JS tests'
+      workingDirectory: 'Whist.Server/ClientApp'
     - task: DotNetCoreCLI@2
       displayName: Bundle as .zip
       inputs:

@@ -2,7 +2,11 @@ export default function gameStateReducer(gameState, action)
 {
     switch (action.type) {
         case "prompt-for-bid":
-            return { state: "bidding-active", cards: gameState.cards };
+            return { state: "bidding-choosing-bid", cards: gameState.cards };
+        case "prompt-for-trump":
+            return { state: "bidding-choosing-trump", cards: gameState.cards };
+        case "prompt-for-buddy-ace":
+            return { state: "bidding-choosing-buddy-ace", cards: gameState.cards };
         case "receive-cards":
             return { state: "bidding", bids: [], cards: action.cards };
         case "start-playing":

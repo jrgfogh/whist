@@ -55,13 +55,17 @@ describe("gameStateReducer", () => {
         });
 
         it.each([
-            [["Joker", "H1", "D5"]],
-            [["H1", "D5", "CJ"]]
-        ])("Will handle prompt for bid", (cards) => {
+            [["Joker", "H1", "D5"], "bid"],
+            [["H1", "D5", "CJ"], "bid"],
+            [["Joker", "H1", "D5"], "trump"],
+            [["H1", "D5", "CJ"], "trump"],
+            [["Joker", "H1", "D5"], "buddy-ace"],
+            [["H1", "D5", "CJ"], "buddy-ace"]
+        ])("Will handle prompts", (cards, promptKind) => {
             const originalState = { state: "bidding", bids: [], cards: cards };
-            const action = { type: "prompt-for-bid", winner: "Player A", bid: "pass" };
+            const action = { type: "prompt-for-" + promptKind };
 
-            const expected = { state: "bidding-active", cards: cards };
+            const expected = { state: "bidding-choosing-" + promptKind, cards: cards };
 
             expect(gameStateReducer(originalState, action)).toEqual(expected);
         });

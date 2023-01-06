@@ -27,25 +27,43 @@ describe("gameStateReducer", () => {
 
             const expected = { state: "bidding", bids: [...previousBids, { bidder: bidder, bid: bid }] };
 
-            expect(gameStateReducer(originalState, action)).toEqual(expected);
+            expect(gameStateReducer(originalState, action)).toMatchObject(expected);
         });
 
-        it("Can receive bidding winner", () => {
-            const originalState = { state: "bidding", bids: [] };
+        it.each([
+            [["Joker", "H1", "D5"]],
+            [["H1", "D5", "CJ"]]
+        ])("Will remember the cards when a bid is received", (cards) => {
+            const originalState = { state: "bidding", bids: [], cards: cards };
+            const action = { type: "choice", chooser: "Player A", choice: "pass" };
+
+            const expected = { cards: cards };
+
+            expect(gameStateReducer(originalState, action)).toMatchObject(expected);
+        });
+
+        it.each([
+            [["Joker", "H1", "D5"]],
+            [["H1", "D5", "CJ"]]
+        ])("Can receive bidding winner", (cards) => {
+            const originalState = { state: "bidding", bids: [], cards: cards };
             const action = { type: "bidding-winner", winner: "Player A", bid: "pass" };
 
-            const expected = { state: "waiting" };
+            const expected = { state: "waiting", cards: cards };
 
             expect(gameStateReducer(originalState, action)).toEqual(expected);
         });
     });
 
     describe("Playing Round", () => {
-        it("Can start playing", () => {
-            const originalState = { state: "bidding", bids: [] };
+        it.each([
+            [["Joker", "H1", "D5"]],
+            [["H1", "D5", "CJ"]]
+        ])("Can start playing", (cards) => {
+            const originalState = { state: "bidding", bids: [], cards: cards };
             const action = { type: "start-playing" };
 
-            const expected = { state: "playing" };
+            const expected = { state: "playing", cards: cards };
 
             expect(gameStateReducer(originalState, action)).toEqual(expected);
         });

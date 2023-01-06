@@ -1,10 +1,14 @@
 export default function gameStateReducer(gameState, action)
 {
-    if (action.type === "receive-cards")
-        return { state: "bidding", bids: [], cards: action.cards };
-    if (action.type === "start-playing")
-        return { state: "playing", cards: gameState.cards };
-    if (action.type === "bidding-winner")
-        return { state: "waiting", cards: gameState.cards };
+    switch (action.type) {
+        case "prompt-for-bid":
+            return { state: "bidding-active", cards: gameState.cards };
+        case "receive-cards":
+            return { state: "bidding", bids: [], cards: action.cards };
+        case "start-playing":
+            return { state: "playing", cards: gameState.cards };
+        case "bidding-winner":
+            return { state: "waiting", cards: gameState.cards };
+    }
     return { state: "bidding", bids: [...gameState.bids, { bidder: action.chooser, bid: action.choice }], cards: gameState.cards };
 }

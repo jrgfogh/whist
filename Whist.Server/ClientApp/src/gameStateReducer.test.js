@@ -53,6 +53,18 @@ describe("gameStateReducer", () => {
 
             expect(gameStateReducer(originalState, action)).toEqual(expected);
         });
+
+        it.each([
+            [["Joker", "H1", "D5"]],
+            [["H1", "D5", "CJ"]]
+        ])("Will handle prompt for bid", (cards) => {
+            const originalState = { state: "bidding", bids: [], cards: cards };
+            const action = { type: "prompt-for-bid", winner: "Player A", bid: "pass" };
+
+            const expected = { state: "bidding-active", cards: cards };
+
+            expect(gameStateReducer(originalState, action)).toEqual(expected);
+        });
     });
 
     describe("Playing Round", () => {

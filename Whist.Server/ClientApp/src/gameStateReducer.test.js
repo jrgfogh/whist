@@ -27,4 +27,16 @@ describe("gameStateReducer", () => {
             expect(gameStateReducer(originalState, action)).toEqual(expected);
         });
     });
+
+    describe("Playing Round", () => {
+        it("Can start playing", () => {
+            // NOTE(jrgfogh): We don't care that there are no bids. The rules are enforced on the server.
+            const originalState = { state: "bidding", bids: [] };
+            const action = { type: "start-playing" };
+
+            const expected = { state: "playing" };
+
+            expect(gameStateReducer(originalState, action)).toEqual(expected);
+        });
+    });
 });

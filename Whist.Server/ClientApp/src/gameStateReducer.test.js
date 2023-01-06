@@ -23,7 +23,7 @@ describe("gameStateReducer", () => {
             ["Player C", "9 common", [{ bidder: "Player A", bid: "pass" }, { bidder: "Player B", bid: "9 common" }]]
         ])("Can receive the bid %p, after previous bids %p", (bidder, bid, previousBids) => {
             const originalState = { state: "bidding", bids: previousBids };
-            const action = { type: "choice", chooser: bidder, choice: bid };
+            const action = { type: "receive-choice", chooser: bidder, choice: bid };
 
             const expected = { state: "bidding", bids: [...previousBids, { bidder: bidder, bid: bid }] };
 
@@ -35,7 +35,7 @@ describe("gameStateReducer", () => {
             [["H1", "D5", "CJ"]]
         ])("Will remember the cards when a bid is received", (cards) => {
             const originalState = { state: "bidding", bids: [], cards: cards };
-            const action = { type: "choice", chooser: "Player A", choice: "pass" };
+            const action = { type: "receive-choice", chooser: "Player A", choice: "pass" };
 
             const expected = { cards: cards };
 
@@ -57,15 +57,23 @@ describe("gameStateReducer", () => {
         it.each([
             [["Joker", "H1", "D5"], "bid"],
             [["H1", "D5", "CJ"], "bid"],
-            [["Joker", "H1", "D5"], "trump"],
-            [["H1", "D5", "CJ"], "trump"],
-            [["Joker", "H1", "D5"], "buddy-ace"],
-            [["H1", "D5", "CJ"], "buddy-ace"]
         ])("Will handle prompts", (cards, promptKind) => {
             const originalState = { state: "bidding", bids: [], cards: cards };
             const action = { type: "prompt-for-" + promptKind };
 
-            const expected = { state: "bidding-choosing-" + promptKind, cards: cards };
+            const expected = { state: "bidding-choosing-" + promptKind, cards: cards, bids: [] };
+
+            expect(gameStateReducer(originalState, action)).toEqual(expected);
+        });
+
+        it.each([
+            [["Joker", "H1", "D5"], [{ bidder: "Player A", bid: "pass" }]],
+            [["H1", "D5", "CJ"], []]
+        ])("Will handle prompts for bids", (cards, previousBids) => {
+            const originalState = { state: "bidding", bids: previousBids, cards: cards };
+            const action = { type: "prompt-for-bid" };
+
+            const expected = { state: "bidding-choosing-bid", cards: cards, bids: previousBids };
 
             expect(gameStateReducer(originalState, action)).toEqual(expected);
         });

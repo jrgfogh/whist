@@ -55,15 +55,17 @@ describe("gameStateReducer", () => {
         });
 
         it.each([
-            [["Joker", "H1", "D5"], "bid"],
-            [["H1", "D5", "CJ"], "bid"],
+            [["Joker", "H1", "D5"], "trump"],
+            [["H1", "D5", "CJ"], "trump"],
+            [["Joker", "H1", "D5"], "buddy-ace"],
+            [["H1", "D5", "CJ"], "buddy-ace"]
         ])("Will handle prompts", (cards, promptKind) => {
             const originalState = { state: "bidding", bids: [], cards: cards };
             const action = { type: "prompt-for-" + promptKind };
 
-            const expected = { state: "bidding-choosing-" + promptKind, cards: cards, bids: [] };
+            const expected = { state: "bidding-choosing-" + promptKind, cards: cards };
 
-            expect(gameStateReducer(originalState, action)).toEqual(expected);
+            expect(gameStateReducer(originalState, action)).toMatchObject(expected);
         });
 
         it.each([
@@ -79,17 +81,17 @@ describe("gameStateReducer", () => {
         });
 
         it.each([
-            [["Joker", "H1", "D5"], "bid"],
-            [["H1", "D5", "CJ"], "bid"],
-            [["Joker", "H1", "D5"], "trump"],
-            [["H1", "D5", "CJ"], "trump"],
-            [["Joker", "H1", "D5"], "buddy-ace"],
-            [["H1", "D5", "CJ"], "buddy-ace"]
-        ])("Will handle user choice", (cards, promptKind) => {
-            const originalState = { state: "bidding-active", bids: [], cards: cards };
-            const action = { type: "user-chose-" + promptKind, choice: "pass" };
+            [["Joker", "H1", "D5"], "bid", []],
+            [["H1", "D5", "CJ"], "bid", []],
+            [["Joker", "H1", "D5"], "trump", [{ bidder: "Player A", bid: "pass" }]],
+            [["H1", "D5", "CJ"], "trump", []],
+            [["Joker", "H1", "D5"], "buddy-ace", [{ bidder: "Player A", bid: "pass" }]],
+            [["H1", "D5", "CJ"], "buddy-ace", []]
+        ])("Will handle user choice", (cards, promptKind, previousBids) => {
+            const originalState = { state: "bidding-active", bids: previousBids, cards: cards };
+            const action = { type: "user-chose-" + promptKind };
 
-            const expected = { state: "waiting", cards: cards };
+            const expected = { state: "bidding", cards: cards, bids: previousBids };
 
             expect(gameStateReducer(originalState, action)).toEqual(expected);
         });

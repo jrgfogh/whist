@@ -10,7 +10,7 @@ export default function gameStateReducer(gameState, action)
         case "user-chose-bid":
         case "user-chose-trump":
         case "user-chose-buddy-ace":
-            return { state: "waiting", cards: gameState.cards };
+            return { state: "bidding", cards: gameState.cards, bids: gameState.bids };
         case "receive-cards":
             return { state: "bidding", bids: [], cards: action.cards };
         case "start-playing":

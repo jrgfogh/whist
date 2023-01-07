@@ -5,37 +5,35 @@ import AcePicker from "./AcePicker";
 
 function modalDialog(props)
 {
-  async function chooseAce(card) {
-    props.setGameState("waiting");
-    console.log(`The buddy ace is ${card}.`);
+  async function choosebuddyAce(card) {
+    props.dispatch({ type: "user-chose-buddy-ace", choice: card });
     await props.connection.invoke("SendChoice", `Buddy ace is ${card}`);
   }
 
   async function chooseTrump(card) {
-    props.setGameState("waiting");
     const trump = card[0];
-    console.log(`The trump is ${trump}.`);
+    props.dispatch({ type: "user-chose-trump", choice: trump });
     await props.connection.invoke("SendChoice", `Trump is ${trump}`);
   }
 
-  if (props.gameState.endsWith("choosing-trump"))
+  if (props.gameState.state.endsWith("choosing-trump"))
     return (<div className="overlay">
         <AcePicker title="Please choose trump:" onChoice={chooseTrump} />
       </div>);
-  if (props.gameState.endsWith("choosing-buddy-ace"))
+  if (props.gameState.state.endsWith("choosing-buddy-ace"))
     return (<div className="overlay">
-        <AcePicker title="Please choose buddy ace:" onChoice={chooseAce} />
+        <AcePicker title="Please choose buddy ace:" onChoice={choosebuddyAce} />
       </div>);
-  if (props.gameState.startsWith("bidding"))
-    return <BidPicker bids={props.bids} gameState={props.gameState}
-      setGameState={props.setGameState} connection={props.connection} />;
+  if (props.gameState.state.startsWith("bidding"))
+    return <BidPicker bids={props.gameState.bids || []} state={props.gameState.state}
+      dispatch={props.dispatch} connection={props.connection} />;
   return "";
 }
 
 export function Home(props) {
   return (
       <div className="game-background">
-        <Hand cards={props.currentTrick} />
+        <Hand cards={[]} />
         <Hand cards={props.cardsInHand} playing={props.gameState === "playing-choosing-card"}
           playCard={props.playCard} />
         {modalDialog(props)}

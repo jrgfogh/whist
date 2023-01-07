@@ -33,15 +33,20 @@ To Player A: Please play a card!
 Player A: H3
 To All: Player A chooses H3
 To Player B: Please play a card!
-Player B: C2
-To All: Player B chooses C2
+Player B: C5
+To All: Player B chooses C5
 To Player C: Please play a card!
 Player C: D5
 To All: Player C chooses D5
 To Player D: Please play a card!
-Player D: H2
-To All: Player D chooses H2
-To All: Player A wins the trick")]
+Player D: H5
+To All: Player D chooses H5
+To All: Player D wins the trick
+To Player D: Please play a card!
+Player D: C2
+To All: Player D chooses C2
+To Player A: Please play a card!
+Player A: C3")]
         public async Task BiddingRound(string input)
         {
             foreach (var expectedEvent in ParseEvents(input))

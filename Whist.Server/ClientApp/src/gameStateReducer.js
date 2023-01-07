@@ -13,6 +13,8 @@ export default function gameStateReducer(gameState, action)
         case "user-chose-trump":
         case "user-chose-buddy-ace":
             return { state: "bidding", cards: gameState.cards, bids: gameState.bids };
+        case "user-chose-card":
+            return { state: "playing", cards: gameState.cards.filter((card) => card !== action.card) };
         case "receive-cards":
             return { state: "bidding", bids: [], cards: action.cards };
         case "start-playing":

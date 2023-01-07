@@ -160,5 +160,17 @@ describe("gameStateReducer", () => {
 
             expect(gameStateReducer(originalState, action)).toEqual(expected);
         });
+
+        it.each([
+            [["Joker", "H1", "D5"], "D5", ["Joker", "H1"]],
+            [["H1", "D5", "CJ"], "H1", ["D5", "CJ"]],
+        ])("Can handle user choice of card", (cardsBefore, chosenCard, cardsAfter) => {
+            const originalState = { state: "playing-choosing-card", cards: cardsBefore }
+            const action = { type: "user-chose-card", card: chosenCard };
+
+            const expected = { state: "playing", cards: cardsAfter };
+
+            expect(gameStateReducer(originalState, action)).toEqual(expected);
+        });
     });
 });

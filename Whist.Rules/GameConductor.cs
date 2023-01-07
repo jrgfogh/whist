@@ -30,11 +30,15 @@ namespace Whist.Rules
         }
 
         private async Task ConductPlayingRoundAsync(string winningBid, string trump)
-        {
+        {   
             await _movePrompter.StartPlaying();
             var round = new PlayingRound(CreateTrickEvaluator(winningBid, trump.Last()));
-            var winner = await PlayTrick(round);
-            await AnnounceWinnerAsync(winner);
+            // TODO(JRGF): Test the loop bound:
+            for (var i = 0; i < 13; i++)
+            {
+                var winner = await PlayTrick(round);
+                await AnnounceWinnerAsync(winner);
+            }
         }
 
         private async Task<int> PlayTrick(PlayingRound round)

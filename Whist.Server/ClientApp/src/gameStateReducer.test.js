@@ -158,7 +158,7 @@ describe("gameStateReducer", () => {
 
             const expected = { state: "playing-choosing-card", cards: cards };
 
-            expect(gameStateReducer(originalState, action)).toEqual(expected);
+            expect(gameStateReducer(originalState, action)).toMatchObject(expected);
         });
 
         it.each([
@@ -170,7 +170,19 @@ describe("gameStateReducer", () => {
 
             const expected = { state: "playing", cards: cardsAfter };
 
-            expect(gameStateReducer(originalState, action)).toEqual(expected);
+            expect(gameStateReducer(originalState, action)).toMatchObject(expected);
+        });
+
+        it.each([
+            ["H1", ["Joker", "H1", "D5"], []],
+            ["D5", ["H1", "D5", "CJ"], ["CQ"]],
+        ])("Can receive the choice of card from a player", (playedCard, cardsInHand, cardsInTrick) => {
+            const originalState = { state: "playing", currentTrick: cardsInTrick, cards: cardsInHand };
+            const action = { type: "receive-choice", chooser: "Player A", choice: playedCard };
+
+            const expected = { state: "playing", currentTrick: [...cardsInTrick, playedCard], cards: cardsInHand };
+
+            expect(gameStateReducer(originalState, action)).toMatchObject(expected);
         });
     });
 });

@@ -55,6 +55,20 @@ describe("gameStateReducer", () => {
         });
 
         it.each([
+            ["Player B", "Trump is H"],
+            ["Player D", "Trump is D"],
+            ["Player B", "Buddy ace is H1"],
+            ["Player D", "Buddy ace is D1"]
+        ])("Can receive %p chose %p", (chooser, choice) => {
+            const originalState = { state: "bidding", bids: [], cards: ["Joker", "H1", "D5"] };
+            const action = { type: "receive-choice", chooser: chooser, choice: choice };
+
+            const expected = originalState;
+
+            expect(gameStateReducer(originalState, action)).toEqual(expected);
+        });
+
+        it.each([
             [["Joker", "H1", "D5"], "trump"],
             [["H1", "D5", "CJ"], "trump"],
             [["Joker", "H1", "D5"], "buddy-ace"],

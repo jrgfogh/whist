@@ -5,14 +5,14 @@ function range(min, max) {
 export function BidPicker(props) {
   function sendBid(bid) {
     return async function() {
-      props.setGameState("bidding")
+      props.dispatch({ type: "user-chose-bid", choice: bid });
       await props.connection.invoke("SendChoice", bid);
     }
   }
 
   function button(bid) {
     return <td key={bid}><button type="button"
-      disabled={!props.gameState.endsWith("active")} onClick={sendBid(bid)}>Bid!</button></td>;
+      disabled={!props.state.endsWith("choosing-bid")} onClick={sendBid(bid)}>Bid!</button></td>;
   }
 
   function buttonRow(postfix) {
@@ -48,7 +48,7 @@ export function BidPicker(props) {
         </tbody>
       </table>
       <div>
-        {props.bids.map((bid, index) => <p key={bid}>{bid}</p>)}
+        {props.bids.map((bid, index) => <p key={bid}>{bid.bidder + " bid " + bid.bid}</p>)}
       </div>
     </div>
   </div>;

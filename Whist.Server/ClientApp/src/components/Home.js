@@ -2,43 +2,42 @@ import Hand from "./Hand.js";
 import "./Game.css";
 import { BidPicker } from "./BidPicker";
 import AcePicker from "./AcePicker";
+import { useCallback } from "react";
 
-function modalDialog(props)
+function ModalDialog({ dispatch, connection, gameState })
 {
-  async function chooseAce(card) {
-    props.setGameState("waiting");
-    console.log(`The buddy ace is ${card}.`);
-    await props.connection.invoke("SendChoice", `Buddy ace is ${card}`);
-  }
+  const choosebuddyAce = useCallback(async (card) => {
+      dispatch({ type: "user-chose-buddy-ace", choice: card });
+      await connection.invoke("SendChoice", `Buddy ace is ${card}`);
+    }, [dispatch, connection]);
 
-  async function chooseTrump(card) {
-    props.setGameState("waiting");
-    const trump = card[0];
-    console.log(`The trump is ${trump}.`);
-    await props.connection.invoke("SendChoice", `Trump is ${trump}`);
-  }
+  const chooseTrump = useCallback(async (card) => {
+      const trump = card[0];
+      dispatch({ type: "user-chose-trump", choice: trump });
+      await connection.invoke("SendChoice", `Trump is ${trump}`);
+    }, [dispatch, connection]);
 
-  if (props.gameState.endsWith("choosing-trump"))
+  if (gameState.state.endsWith("choosing-trump"))
     return (<div className="overlay">
         <AcePicker title="Please choose trump:" onChoice={chooseTrump} />
       </div>);
-  if (props.gameState.endsWith("choosing-buddy-ace"))
+  if (gameState.state.endsWith("choosing-buddy-ace"))
     return (<div className="overlay">
-        <AcePicker title="Please choose buddy ace:" onChoice={chooseAce} />
+        <AcePicker title="Please choose buddy ace:" onChoice={choosebuddyAce} />
       </div>);
-  if (props.gameState.startsWith("bidding"))
-    return <BidPicker bids={props.bids} gameState={props.gameState}
-      setGameState={props.setGameState} connection={props.connection} />;
+  if (gameState.state.startsWith("bidding"))
+    return <BidPicker bids={gameState.bids || []} state={gameState.state}
+      dispatch={dispatch} connection={connection} />;
   return "";
 }
 
-export function Home(props) {
+export function Home({ dispatch, connection, gameState, cardsInHand, playCard }) {
   return (
       <div className="game-background">
-        <Hand cards={props.currentTrick} />
-        <Hand cards={props.cardsInHand} playing={props.gameState === "playing-choosing-card"}
-          playCard={props.playCard} />
-        {modalDialog(props)}
+        <Hand cards={[]} />
+        <Hand cards={cardsInHand} playing={gameState === "playing-choosing-card"}
+          playCard={playCard} />
+        <ModalDialog dispatch={dispatch} connection={connection} gameState={gameState} />
       </div>
     );
 }

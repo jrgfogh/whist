@@ -2,19 +2,20 @@ import Hand from "./Hand.js";
 import "./Game.css";
 import { BidPicker } from "./BidPicker";
 import AcePicker from "./AcePicker";
+import { useCallback } from "react";
 
 function modalDialog(props)
 {
-  async function choosebuddyAce(card) {
-    props.dispatch({ type: "user-chose-buddy-ace", choice: card });
-    await props.connection.invoke("SendChoice", `Buddy ace is ${card}`);
-  }
+  const choosebuddyAce = useCallback(async (card) => {
+      props.dispatch({ type: "user-chose-buddy-ace", choice: card });
+      await props.connection.invoke("SendChoice", `Buddy ace is ${card}`);
+    }, [props.dispatch, props.connection]);
 
-  async function chooseTrump(card) {
-    const trump = card[0];
-    props.dispatch({ type: "user-chose-trump", choice: trump });
-    await props.connection.invoke("SendChoice", `Trump is ${trump}`);
-  }
+  const chooseTrump = useCallback(async (card) => {
+      const trump = card[0];
+      props.dispatch({ type: "user-chose-trump", choice: trump });
+      await props.connection.invoke("SendChoice", `Trump is ${trump}`);
+    }, [props.dispatch, props.connection]);
 
   if (props.gameState.state.endsWith("choosing-trump"))
     return (<div className="overlay">

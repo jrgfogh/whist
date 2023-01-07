@@ -7,7 +7,7 @@ export function connect(dispatch) {
         .build();
     connection.on("ReceiveDealtCards", (cards) => { dispatch({ type: "receive-cards", cards: cards }); });
     connection.on("AnnounceBiddingWinner", (winner, bid) => { dispatch({ type: "bidding-winner", winner: winner, bid: bid }); });
-    connection.on("AnnounceWinner", (winner) => { dispatch({ type: "" }); });
+    connection.on("AnnounceWinner", (winner) => { dispatch({ type: "trick-winner", winner: winner }); });
     connection.on("ReceiveChoice", (chooser, choice) => { dispatch({ type: "receive-choice", chooser: chooser, choice: choice }); });
     connection.on("PromptForBid", () => { dispatch({ type: "prompt-for-bid" }); });
     connection.on("PromptForTrump", () => { dispatch({ type: "prompt-for-trump" }); });

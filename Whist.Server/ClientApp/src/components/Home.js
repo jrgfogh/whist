@@ -31,11 +31,16 @@ function ModalDialog({ dispatch, connection, gameState })
   return "";
 }
 
-export function Home({ dispatch, connection, gameState, cardsInHand, playCard }) {
+export function Home({ dispatch, connection, gameState, cardsInHand }) {
+  const playCard = useCallback(async (card) => {
+    dispatch({ type: "user-chose-card", card: card });
+    await connection.invoke("SendChoice", card);
+  }, [dispatch, connection]);
+
   return (
       <div className="game-background">
-        <Hand cards={[]} />
-        <Hand cards={cardsInHand} playing={gameState === "playing-choosing-card"}
+        <Hand cards={gameState.currentTrick || []} />
+        <Hand cards={cardsInHand} playing={gameState.state === "playing-choosing-card"}
           playCard={playCard} />
         <ModalDialog dispatch={dispatch} connection={connection} gameState={gameState} />
       </div>

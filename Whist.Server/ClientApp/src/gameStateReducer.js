@@ -21,6 +21,8 @@ export default function gameStateReducer(gameState, action)
             return { state: "playing", cards: gameState.cards, currentTrick: [] };
         case "bidding-winner":
             return { state: "waiting", cards: gameState.cards };
+        case "trick-winner":
+            return { state: "playing", cards: gameState.cards, currentTrick: [] };
     }
     if (gameState.state === "playing")
         return { state: "playing", currentTrick: [...gameState.currentTrick, action.choice], cards: gameState.cards };

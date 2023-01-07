@@ -8,17 +8,17 @@ export default function gameStateReducer(gameState, action)
         case "prompt-for-buddy-ace":
             return { state: "bidding-choosing-buddy-ace", cards: gameState.cards };
         case "prompt-for-card":
-            return { state: "playing-choosing-card", cards: gameState.cards };
+            return { state: "playing-choosing-card", cards: gameState.cards, currentTrick: gameState.currentTrick };
         case "user-chose-bid":
         case "user-chose-trump":
         case "user-chose-buddy-ace":
             return { state: "bidding", cards: gameState.cards, bids: gameState.bids };
         case "user-chose-card":
-            return { state: "playing", cards: gameState.cards.filter((card) => card !== action.card) };
+            return { state: "playing", cards: gameState.cards.filter((card) => card !== action.card), currentTrick: gameState.currentTrick };
         case "receive-cards":
             return { state: "bidding", bids: [], cards: action.cards };
         case "start-playing":
-            return { state: "playing", cards: gameState.cards };
+            return { state: "playing", cards: gameState.cards, currentTrick: [] };
         case "bidding-winner":
             return { state: "waiting", cards: gameState.cards };
     }

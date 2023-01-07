@@ -48,7 +48,10 @@ export function BidPicker(props) {
         </tbody>
       </table>
       <div>
-        {props.bids.map((bid, index) => <p key={bid}>{bid.bidder + " bid " + bid.bid}</p>)}
+        {props.bids.map((bid, index) => {
+          const bidDescription = bid.bidder + " bid " + bid.bid;
+          return <p key={bidDescription}>{bidDescription}</p>;
+        })}
       </div>
     </div>
   </div>;

@@ -9,35 +9,38 @@ using Whist.Rules;
 
 namespace Whist.Server
 {
-    public sealed class GameConductorService : BackgroundService, IMovePrompter
+    public sealed class GameConductorService : IMovePrompter, IAsyncDisposable
     {
         private readonly IHubContext<WhistHub, IWhistClient> _hubContext;
         private TaskCompletionSource<string> _promise = null!;
-        private readonly CancellationTokenSource _cancellationTokenSource;
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
         private readonly object _connectionIdsSyncLock = new();
         private readonly List<string> _connectionIdsAtTable = new();
+        private Task? _gameTask;
 
         public GameConductorService(IHubContext<WhistHub, IWhistClient> hubContext)
         {
             _hubContext = hubContext;
-            _cancellationTokenSource = new CancellationTokenSource();
         }
 
-        public override void Dispose()
+        public async ValueTask DisposeAsync()
         {
             _cancellationTokenSource.Cancel();
+            try
+            {
+                if (_gameTask != null)
+                    await _gameTask;
+            }
+            catch (OperationCanceledException)
+            {
+                // NOTE(jrgfogh): We know that the task has been cancelled.
+            }
             _cancellationTokenSource.Dispose();
-            base.Dispose();
-        }
-
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            return Task.CompletedTask;
         }
 
         public void StartGame()
         {
-            Task.Run(async () =>
+            _gameTask = Task.Run(async () =>
             {
                 var gameConductor = new GameConductor(this);
                 await gameConductor.ConductGame().WaitAsync(_cancellationTokenSource.Token).ConfigureAwait(false);

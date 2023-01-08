@@ -24,7 +24,6 @@ namespace Whist.Server
             services.AddSignalR();//.AddAzureSignalR();
 
             services.AddSingleton<GameConductorService>();
-            services.AddHostedService<GameConductorServiceWrapper>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

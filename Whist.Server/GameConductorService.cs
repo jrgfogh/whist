@@ -35,36 +35,32 @@ namespace Whist.Server
             }
         }
 
-        public async Task<string> PromptForBid(int playerToBid)
+        private async Task<string> Prompt(Func<Task> prompter)
         {
             _promise = new TaskCompletionSource<string>();
-            await GetClient(playerToBid).PromptForBid();
+            await prompter();
+            // TODO(jrgfogh): Validate the result:
             return await _promise.Task;
         }
 
-        public async Task<string> PromptForTrump(int winner)
+        public Task<string> PromptForBid(int playerToBid)
         {
-            _promise = new TaskCompletionSource<string>();
-            await GetClient(winner).PromptForTrump();
-            return await _promise.Task;
+            return Prompt(GetClient(playerToBid).PromptForBid);
         }
 
-        public async Task<string> PromptForBuddyAce(int winner)
+        public Task<string> PromptForTrump(int winner)
         {
-            _promise = new TaskCompletionSource<string>();
-            await GetClient(winner).PromptForBuddyAce();
-            var receivedBuddyAce = await _promise.Task;
-            // TODO(jrgfogh): Test this!
-            if (!receivedBuddyAce.StartsWith("Buddy ace is ", StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException("Received unexpected buddy ace message: " + receivedBuddyAce);
-            return receivedBuddyAce;
+            return Prompt(GetClient(winner).PromptForTrump);
         }
 
-        public async Task<string> PromptForCard(int playerToPlay)
+        public Task<string> PromptForBuddyAce(int winner)
         {
-            _promise = new TaskCompletionSource<string>();
-            await GetClient(playerToPlay).PromptForCard();
-            return await _promise.Task;
+            return Prompt(GetClient(winner).PromptForBuddyAce);
+        }
+
+        public Task<string> PromptForCard(int playerToPlay)
+        {
+            return Prompt(GetClient(playerToPlay).PromptForCard);
         }
 
         public async Task DealCards(int playerIndex, List<Card> cards)

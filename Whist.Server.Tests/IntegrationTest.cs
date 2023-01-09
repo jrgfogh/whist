@@ -24,7 +24,7 @@ namespace Whist.Server.Tests
             }
         }
 
-        private IHost _host = null!;
+        protected IHost Host = null!;
         protected Dictionary<string, TestPlayer> TestPlayers = new();
 
         private static Event ParseEvent(string line)
@@ -46,7 +46,7 @@ namespace Whist.Server.Tests
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
             Environment.CurrentDirectory = ServerPath();
-            _host = Program.CreateHostBuilder(Array.Empty<string>())
+            Host = Program.CreateHostBuilder(Array.Empty<string>())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseKestrel();
@@ -56,15 +56,15 @@ namespace Whist.Server.Tests
                 {
                     services.AddSingleton<IConductorService, TConductorService>();
                 })
-                .Build(); 
-            await _host.StartAsync();
+                .Build();
+            await Host.StartAsync();
         }
 
         [OneTimeTearDown]
         public async Task OneTimeTearDown()
         {
-            await _host.StopAsync();
-            _host.Dispose();
+            await Host.StopAsync();
+            Host.Dispose();
         }
 
         [SetUp]

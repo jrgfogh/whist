@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Whist.Server.Tests
 {
     public class BiddingTests : IntegrationTest<GameConductorService>
@@ -47,6 +49,8 @@ To Player A: Please play a card!
 Player A: C3")]
         public async Task BiddingRound(string input)
         {
+            PlayersJoinTable();
+
             foreach (var expectedEvent in ParseEvents(input))
             {
                 if (expectedEvent.Sender == "To All")
@@ -65,6 +69,13 @@ Player A: C3")]
                 else
                     await SendChoice(expectedEvent);
             }
+        }
+
+        private void PlayersJoinTable()
+        {
+            var conductorService = Host.Services.GetRequiredService<IConductorService>();
+            foreach (var (_, testPlayer) in TestPlayers.OrderBy(pair => pair.Key))
+                conductorService.JoinTable(testPlayer.Connection.ConnectionId!);
         }
     }
 }

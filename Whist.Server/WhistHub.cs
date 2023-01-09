@@ -13,18 +13,6 @@ namespace Whist.Server
             _conductorService = conductorService;
         }
 
-        public override async Task OnConnectedAsync()
-        {
-            _conductorService.JoinTable(Context.ConnectionId);
-            await base.OnConnectedAsync();
-        }
-
-        public override async Task OnDisconnectedAsync(Exception? exception)
-        {
-            await _conductorService.LeaveTable(Context.ConnectionId);
-            await base.OnDisconnectedAsync(exception);
-        }
-
         public async Task SendChoice(string choice)
         {
             await Clients.All.ReceiveChoice(UserNameOfCaller(), choice);

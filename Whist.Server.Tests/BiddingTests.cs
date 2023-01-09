@@ -1,8 +1,6 @@
-using Microsoft.AspNetCore.SignalR.Client;
-
 namespace Whist.Server.Tests
 {
-    public class BiddingTests : IntegrationTest
+    public class BiddingTests : IntegrationTest<GameConductorService>
     {
         protected override string TestUrl => "http://localhost:5000";
 

@@ -6,8 +6,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace Whist.Server.Tests
 {
-    public abstract class IntegrationTest
+    public abstract class IntegrationTest<TConductorService> where TConductorService : class, IConductorService
     {
+
         // The different tests can't bind to the same port:
         protected abstract string TestUrl { get; }
 
@@ -23,7 +24,6 @@ namespace Whist.Server.Tests
             }
         }
 
-        protected GameConductorService ConductorService = null!;
         private IHost _host = null!;
         protected Dictionary<string, TestPlayer> TestPlayers = new();
 
@@ -52,8 +52,11 @@ namespace Whist.Server.Tests
                     webBuilder.UseKestrel();
                     webBuilder.UseUrls(TestUrl);
                 })
-                .Build();
-            ConductorService = _host.Services.GetRequiredService<GameConductorService>();
+                .ConfigureServices(services =>
+                {
+                    services.AddSingleton<IConductorService, TConductorService>();
+                })
+                .Build(); 
             await _host.StartAsync();
         }
 

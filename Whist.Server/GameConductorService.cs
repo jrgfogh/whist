@@ -1,6 +1,5 @@
 using System;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -9,7 +8,7 @@ using Whist.Rules;
 
 namespace Whist.Server
 {
-    public sealed class GameConductorService : IMovePrompter, IAsyncDisposable
+    public sealed class GameConductorService : IMovePrompter, IAsyncDisposable, IConductorService
     {
         private readonly IHubContext<WhistHub, IWhistClient> _hubContext;
         private TaskCompletionSource<string> _promise = null!;

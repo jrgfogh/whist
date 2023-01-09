@@ -8,7 +8,7 @@ namespace Whist.Server;
 public sealed class GameTaskManager : IAsyncDisposable
 {
     private readonly IMovePrompter _movePrompter;
-    private readonly CancellationTokenSource _cancellationTokenSource = new();
+    private CancellationTokenSource? _cancellationTokenSource;
     private Task? _gameTask;
 
     public GameTaskManager(IMovePrompter movePrompter)
@@ -20,6 +20,7 @@ public sealed class GameTaskManager : IAsyncDisposable
 
     public void StartGame()
     {
+        _cancellationTokenSource = new CancellationTokenSource();
         _gameTask = Task.Run(async () =>
         {
             var gameConductor = new GameConductor(_movePrompter);
@@ -29,7 +30,7 @@ public sealed class GameTaskManager : IAsyncDisposable
 
     public async Task StopGame()
     {
-        _cancellationTokenSource.Cancel();
+        _cancellationTokenSource?.Cancel();
         try
         {
             if (_gameTask != null)
@@ -39,6 +40,7 @@ public sealed class GameTaskManager : IAsyncDisposable
         {
             // NOTE(jrgfogh): We know that the task has been cancelled.
         }
-        _cancellationTokenSource.Dispose();
+        _cancellationTokenSource?.Dispose();
+        _cancellationTokenSource = null;
     }
 }

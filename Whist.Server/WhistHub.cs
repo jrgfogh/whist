@@ -21,7 +21,7 @@ namespace Whist.Server
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            _conductorService.LeaveTable(Context.ConnectionId);
+            await _conductorService.LeaveTable(Context.ConnectionId);
             await base.OnDisconnectedAsync(exception);
         }
 

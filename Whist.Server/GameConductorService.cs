@@ -88,14 +88,6 @@ namespace Whist.Server
             await _hubContext.Clients.All.StartPlaying();
         }
 
-        public void LeaveTable(string connectionId)
-        {
-            lock (_connectionIdsSyncLock)
-            {
-                _connectionIdsAtTable.Remove(connectionId);
-            }
-        }
-
         public void JoinTable(string connectionId)
         {
             lock (_connectionIdsSyncLock)
@@ -103,6 +95,15 @@ namespace Whist.Server
                 _connectionIdsAtTable.Add(connectionId);
                 if (_connectionIdsAtTable.Count == 4) _gameTaskManager.StartGame();
             }
+        }
+
+        public async Task LeaveTable(string connectionId)
+        {
+            lock (_connectionIdsSyncLock)
+            {
+                _connectionIdsAtTable.Remove(connectionId);
+            }
+            await _gameTaskManager.StopGame();
         }
 
         public string UserName(string connectionId)

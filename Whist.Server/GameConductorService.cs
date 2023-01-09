@@ -2,7 +2,6 @@ using System;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Whist.Rules;
 
@@ -12,38 +11,19 @@ namespace Whist.Server
     {
         private readonly IHubContext<WhistHub, IWhistClient> _hubContext;
         private TaskCompletionSource<string> _promise = null!;
-        private readonly CancellationTokenSource _cancellationTokenSource = new();
         private readonly object _connectionIdsSyncLock = new();
         private readonly List<string> _connectionIdsAtTable = new();
-        private Task? _gameTask;
+        private readonly GameTaskManager _gameTaskManager;
 
         public GameConductorService(IHubContext<WhistHub, IWhistClient> hubContext)
         {
             _hubContext = hubContext;
+            _gameTaskManager = new GameTaskManager(this);
         }
 
-        public async ValueTask DisposeAsync()
+        public ValueTask DisposeAsync()
         {
-            _cancellationTokenSource.Cancel();
-            try
-            {
-                if (_gameTask != null)
-                    await _gameTask;
-            }
-            catch (OperationCanceledException)
-            {
-                // NOTE(jrgfogh): We know that the task has been cancelled.
-            }
-            _cancellationTokenSource.Dispose();
-        }
-
-        public void StartGame()
-        {
-            _gameTask = Task.Run(async () =>
-            {
-                var gameConductor = new GameConductor(this);
-                await gameConductor.ConductGame().WaitAsync(_cancellationTokenSource.Token).ConfigureAwait(false);
-            });
+            return _gameTaskManager.DisposeAsync();
         }
 
         private IWhistClient GetClient(int playerIndex)
@@ -125,8 +105,7 @@ namespace Whist.Server
             lock (_connectionIdsSyncLock)
             {
                 _connectionIdsAtTable.Add(connectionId);
-                if (_connectionIdsAtTable.Count == 4)
-                    StartGame();
+                if (_connectionIdsAtTable.Count == 4) _gameTaskManager.StartGame();
             }
         }
 

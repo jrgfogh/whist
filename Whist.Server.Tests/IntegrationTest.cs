@@ -68,16 +68,16 @@ namespace Whist.Server.Tests
         }
 
         [SetUp]
-        public async Task Setup()
+        public void Setup()
         {
-            var uri = new Uri(TestUrl + "/WhistHub");
-            await OpenConnection(uri, "Player A");
-            await OpenConnection(uri, "Player B");
-            await OpenConnection(uri, "Player C");
-            await OpenConnection(uri, "Player D");
+            var uri = new Uri($"{TestUrl}/WhistHub");
+            OpenConnection(uri, "Player A");
+            OpenConnection(uri, "Player B");
+            OpenConnection(uri, "Player C");
+            OpenConnection(uri, "Player D");
         }
 
-        private async Task OpenConnection(Uri serverUri, string playerName)
+        private void OpenConnection(Uri serverUri, string playerName)
         {
             var connection = new HubConnectionBuilder()
                 .WithUrl(serverUri)
@@ -85,25 +85,26 @@ namespace Whist.Server.Tests
 
             void HandleEvent(string methodName, string message) =>
                 connection.On(methodName: methodName, () =>
-                        TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, message)));
+                        TestPlayers[playerName].ReceivedEvents.Add(new Event($"To {playerName}", message)));
 
             HandleEvent("PromptForBid", "Please bid!");
             HandleEvent("PromptForTrump", "Please choose the trump!");
             HandleEvent("PromptForBuddyAce", "Please choose the buddy ace!");
             HandleEvent("PromptForCard", "Please play a card!");
             HandleEvent("StartPlaying", "Start playing!");
-            connection.On("UpdatePlayersAtTable", (IEnumerable<string> players) =>
-                    TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "UpdatePlayersAtTable")));
+            connection.On("AnnouncePlayerName", (int index, string name) =>
+                    TestPlayers[playerName].ReceivedEvents.Add(new Event($"To {playerName}",
+                        $"Player {index}'s name is {name}")));
             connection.On("ReceiveDealtCards", (IEnumerable<string> cards) =>
-                    TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, "Please take your cards!")));
+                    TestPlayers[playerName].ReceivedEvents.Add(new Event($"To {playerName}", "Please take your cards!")));
             connection.On("AnnounceBiddingWinner", (string winner, string bid) =>
-                    TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, winner + " wins bidding, " + bid)));
+                    TestPlayers[playerName].ReceivedEvents.Add(new Event($"To {playerName}",
+                        $"{winner} wins bidding, {bid}")));
             connection.On("AnnounceWinner", (string winner) =>
-                    TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName, winner + " wins the trick")));
+                    TestPlayers[playerName].ReceivedEvents.Add(new Event($"To {playerName}", $"{winner} wins the trick")));
             connection.On("ReceiveChoice", (string chooser, string choice) =>
-                TestPlayers[playerName].ReceivedEvents.Add(new Event("To " + playerName,
-                chooser + " chooses " + choice)));
-            await connection.StartAsync().ConfigureAwait(false);
+                TestPlayers[playerName].ReceivedEvents.Add(new Event($"To {playerName}",
+                    $"{chooser} chooses {choice}")));
             TestPlayers[playerName] = new TestPlayer(connection);
         }
 
@@ -118,6 +119,30 @@ namespace Whist.Server.Tests
         private static string TrimMessage(Event expectedEvent)
         {
             return expectedEvent.Message.TrimEnd('!');
+        }
+
+        protected async Task ProcessEvents(string input)
+        {
+            foreach (var expectedEvent in IntegrationTest<GameConductorService>.ParseEvents(input))
+            {
+                if (expectedEvent.Sender == "To All")
+                {
+                    foreach (var (_, player) in TestPlayers)
+                    {
+                        var actualEvent = player.ReceivedEvents.Take();
+                        Assert.That(actualEvent.Message, Is.EqualTo(expectedEvent.Message).IgnoreCase);
+                    }
+                }
+                else if (expectedEvent.Sender.StartsWith("To "))
+                {
+                    var actualEvent = TestPlayers[expectedEvent.Sender[3..]].ReceivedEvents.Take();
+                    Assert.That(actualEvent, Is.EqualTo(expectedEvent));
+                }
+                else if (expectedEvent.Message == "<connects>")
+                    await TestPlayers[expectedEvent.Sender].Connection.StartAsync().ConfigureAwait(false);
+                else
+                    await SendChoice(expectedEvent);
+            }
         }
     }
 }

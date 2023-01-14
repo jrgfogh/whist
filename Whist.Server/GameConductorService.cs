@@ -10,7 +10,7 @@ namespace Whist.Server
     public sealed class GameConductorService : IMovePrompter, IAsyncDisposable, IConductorService
     {
         private readonly IHubContext<WhistHub, IWhistClient> _hubContext;
-        private TaskCompletionSource<string> _promise = null!;
+        private TaskCompletionSource<string>? _promise;
         private readonly object _connectionIdsSyncLock = new();
         private readonly List<string> _connectionIdsAtTable = new();
         private readonly GameTaskManager _gameTaskManager;
@@ -68,9 +68,11 @@ namespace Whist.Server
             await GetClient(playerIndex).ReceiveDealtCards(cards.Select(c => c.ToString()));
         }
 
-        public void ReceiveChoice(string choice)
+        public async Task ReceiveChoice(string connectionId, string choice)
         {
-            _promise.TrySetResult(choice);
+            await _hubContext.Clients.All.ReceiveChoice(UserName(connectionId), choice);
+            // TODO(jrgfogh): Validate the result:
+            _promise?.TrySetResult(choice);
         }
 
         public async Task AnnounceWinner(string winner)
@@ -111,6 +113,8 @@ namespace Whist.Server
             lock (_connectionIdsSyncLock)
             {
                 var index = _connectionIdsAtTable.IndexOf(connectionId);
+                if (index == -1)
+                    return "";
                 var playerNames = new[]
                 {
                     "Player A",

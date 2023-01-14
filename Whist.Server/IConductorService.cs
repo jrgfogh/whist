@@ -4,8 +4,7 @@ namespace Whist.Server;
 
 public interface IConductorService
 {
-    void ReceiveChoice(string choice);
+    Task ReceiveChoice(string connectionId, string choice);
     void JoinTable(string connectionId);
     Task LeaveTable(string connectionId);
-    string UserName(string connectionId);
 }

@@ -13,15 +13,9 @@ namespace Whist.Server
             _conductorService = conductorService;
         }
 
-        public async Task SendChoice(string choice)
+        public Task SendChoice(string choice)
         {
-            await Clients.All.ReceiveChoice(UserNameOfCaller(), choice);
-            _conductorService.ReceiveChoice(choice);
-        }
-
-        private string UserNameOfCaller()
-        {
-            return _conductorService.UserName(Context.ConnectionId);
+            return _conductorService.ReceiveChoice(Context.ConnectionId, choice);
         }
     }
 }

@@ -1,50 +1,29 @@
 using System;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Whist.Rules;
 
 namespace Whist.Server
 {
-    public sealed class GameConductorService : IMovePrompter, IAsyncDisposable
+    public sealed class GameConductorService : IMovePrompter, IAsyncDisposable, IConductorService
     {
         private readonly IHubContext<WhistHub, IWhistClient> _hubContext;
-        private TaskCompletionSource<string> _promise = null!;
-        private readonly CancellationTokenSource _cancellationTokenSource = new();
+        private TaskCompletionSource<string>? _promise;
         private readonly object _connectionIdsSyncLock = new();
         private readonly List<string> _connectionIdsAtTable = new();
-        private Task? _gameTask;
+        private readonly GameTaskManager _gameTaskManager;
 
         public GameConductorService(IHubContext<WhistHub, IWhistClient> hubContext)
         {
             _hubContext = hubContext;
+            _gameTaskManager = new GameTaskManager(this);
         }
 
-        public async ValueTask DisposeAsync()
+        public ValueTask DisposeAsync()
         {
-            _cancellationTokenSource.Cancel();
-            try
-            {
-                if (_gameTask != null)
-                    await _gameTask;
-            }
-            catch (OperationCanceledException)
-            {
-                // NOTE(jrgfogh): We know that the task has been cancelled.
-            }
-            _cancellationTokenSource.Dispose();
-        }
-
-        public void StartGame()
-        {
-            _gameTask = Task.Run(async () =>
-            {
-                var gameConductor = new GameConductor(this);
-                await gameConductor.ConductGame().WaitAsync(_cancellationTokenSource.Token).ConfigureAwait(false);
-            });
+            return _gameTaskManager.DisposeAsync();
         }
 
         private IWhistClient GetClient(int playerIndex)
@@ -56,36 +35,32 @@ namespace Whist.Server
             }
         }
 
-        public async Task<string> PromptForBid(int playerToBid)
+        private async Task<string> Prompt(Func<Task> prompter)
         {
             _promise = new TaskCompletionSource<string>();
-            await GetClient(playerToBid).PromptForBid();
+            await prompter();
+            // TODO(jrgfogh): Validate the result:
             return await _promise.Task;
         }
 
-        public async Task<string> PromptForTrump(int winner)
+        public Task<string> PromptForBid(int playerToBid)
         {
-            _promise = new TaskCompletionSource<string>();
-            await GetClient(winner).PromptForTrump();
-            return await _promise.Task;
+            return Prompt(GetClient(playerToBid).PromptForBid);
         }
 
-        public async Task<string> PromptForBuddyAce(int winner)
+        public Task<string> PromptForTrump(int winner)
         {
-            _promise = new TaskCompletionSource<string>();
-            await GetClient(winner).PromptForBuddyAce();
-            var receivedBuddyAce = await _promise.Task;
-            // TODO(jrgfogh): Test this!
-            if (!receivedBuddyAce.StartsWith("Buddy ace is ", StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException("Received unexpected buddy ace message: " + receivedBuddyAce);
-            return receivedBuddyAce;
+            return Prompt(GetClient(winner).PromptForTrump);
         }
 
-        public async Task<string> PromptForCard(int playerToPlay)
+        public Task<string> PromptForBuddyAce(int winner)
         {
-            _promise = new TaskCompletionSource<string>();
-            await GetClient(playerToPlay).PromptForCard();
-            return await _promise.Task;
+            return Prompt(GetClient(winner).PromptForBuddyAce);
+        }
+
+        public Task<string> PromptForCard(int playerToPlay)
+        {
+            return Prompt(GetClient(playerToPlay).PromptForCard);
         }
 
         public async Task DealCards(int playerIndex, List<Card> cards)
@@ -93,9 +68,11 @@ namespace Whist.Server
             await GetClient(playerIndex).ReceiveDealtCards(cards.Select(c => c.ToString()));
         }
 
-        public void ReceiveChoice(string choice)
+        public async Task ReceiveChoice(string connectionId, string choice)
         {
-            _promise.TrySetResult(choice);
+            await _hubContext.Clients.All.ReceiveChoice(UserName(connectionId), choice);
+            // TODO(jrgfogh): Validate the result:
+            _promise?.TrySetResult(choice);
         }
 
         public async Task AnnounceWinner(string winner)
@@ -113,22 +90,22 @@ namespace Whist.Server
             await _hubContext.Clients.All.StartPlaying();
         }
 
-        public void LeaveTable(string connectionId)
-        {
-            lock (_connectionIdsSyncLock)
-            {
-                _connectionIdsAtTable.Remove(connectionId);
-            }
-        }
-
         public void JoinTable(string connectionId)
         {
             lock (_connectionIdsSyncLock)
             {
                 _connectionIdsAtTable.Add(connectionId);
-                if (_connectionIdsAtTable.Count == 4)
-                    StartGame();
+                if (_connectionIdsAtTable.Count == 4) _gameTaskManager.StartGame();
             }
+        }
+
+        public async Task LeaveTable(string connectionId)
+        {
+            lock (_connectionIdsSyncLock)
+            {
+                _connectionIdsAtTable.Remove(connectionId);
+            }
+            await _gameTaskManager.StopGame();
         }
 
         public string UserName(string connectionId)
@@ -136,6 +113,8 @@ namespace Whist.Server
             lock (_connectionIdsSyncLock)
             {
                 var index = _connectionIdsAtTable.IndexOf(connectionId);
+                if (index == -1)
+                    return "";
                 var playerNames = new[]
                 {
                     "Player A",

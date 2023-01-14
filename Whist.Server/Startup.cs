@@ -23,7 +23,7 @@ namespace Whist.Server
             // TODO(jrgfogh): Reenable, once Whist is back on Azure:
             services.AddSignalR();//.AddAzureSignalR();
 
-            services.AddSingleton<GameConductorService>();
+            services.AddSingleton<IConductorService,GameConductorService>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

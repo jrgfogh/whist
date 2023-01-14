@@ -6,34 +6,16 @@ namespace Whist.Server
 {
     public sealed class WhistHub : Hub<IWhistClient>
     {
-        private readonly GameConductorService _gameConductorService;
+        private readonly IConductorService _conductorService;
 
-        public WhistHub(GameConductorService gameConductorService)
+        public WhistHub(IConductorService conductorService)
         {
-            _gameConductorService = gameConductorService;
+            _conductorService = conductorService;
         }
 
-        public override async Task OnConnectedAsync()
+        public Task SendChoice(string choice)
         {
-            _gameConductorService.JoinTable(Context.ConnectionId);
-            await base.OnConnectedAsync();
-        }
-
-        public override async Task OnDisconnectedAsync(Exception? exception)
-        {
-            _gameConductorService.LeaveTable(Context.ConnectionId);
-            await base.OnDisconnectedAsync(exception);
-        }
-
-        public async Task SendChoice(string choice)
-        {
-            await Clients.All.ReceiveChoice(UserNameOfCaller(), choice);
-            _gameConductorService.ReceiveChoice(choice);
-        }
-
-        private string UserNameOfCaller()
-        {
-            return _gameConductorService.UserName(Context.ConnectionId);
+            return _conductorService.ReceiveChoice(Context.ConnectionId, choice);
         }
     }
 }

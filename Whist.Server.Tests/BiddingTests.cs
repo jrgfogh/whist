@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Whist.Server.Tests
 {
-    public class BiddingTests : IntegrationTest
+    public class BiddingTests : IntegrationTest<GameConductorService>
     {
         protected override string TestUrl => "http://localhost:5000";
 
@@ -49,24 +50,27 @@ To Player A: Please play a card!
 Player A: C3")]
         public async Task BiddingRound(string input)
         {
-            foreach (var expectedEvent in ParseEvents(input))
-            {
-                if (expectedEvent.Sender == "To All")
-                {
-                    foreach (var (_, player) in TestPlayers)
-                    {
-                        var actualEvent = player.ReceivedEvents.Take();
-                        Assert.That(actualEvent.Message, Is.EqualTo(expectedEvent.Message).IgnoreCase);
-                    }
-                }
-                else if (expectedEvent.Sender.StartsWith("To "))
-                {
-                    var actualEvent = TestPlayers[expectedEvent.Sender[3..]].ReceivedEvents.Take();
-                    Assert.That(actualEvent, Is.EqualTo(expectedEvent));
-                }
-                else
-                    await SendChoice(expectedEvent);
-            }
+            await PlayersConnect();
+            PlayersJoinTable();
+            await ProcessEvents(input);
+        }
+
+        private async Task PlayersConnect()
+        {
+            foreach (var connection in OrderedConnections())
+                await connection.StartAsync().ConfigureAwait(false);
+        }
+
+        private void PlayersJoinTable()
+        {
+            var conductorService = Host.Services.GetRequiredService<IConductorService>();
+            foreach (var connection in OrderedConnections())
+                conductorService.JoinTable(connection.ConnectionId!);
+        }
+
+        private IEnumerable<HubConnection> OrderedConnections()
+        {
+            return TestPlayers.OrderBy(pair => pair.Key).Select(pair => pair.Value.Connection);
         }
     }
 }

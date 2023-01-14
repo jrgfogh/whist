@@ -1,17 +1,22 @@
 ﻿namespace Whist.Server.Tests
 {
-    public class LobbyTests : IntegrationTest
+    public class LobbyTests : IntegrationTest<GameConductorService>
     {
         protected override string TestUrl => "http://localhost:5001";
 
         [Test]
-        public void PlayerAIsPrompted()
+        [TestCase(
+@"Player A: <connects>
+Player A: My name is Albert!
+Player B: <connects>
+Player B: My name is Brigitte!
+Player C: <connects>
+Player C: My name is Charlie!
+Player D: <connects>
+Player D: My name is Dina!")]
+        public async Task Lobby(string input)
         {
-            var receivedEvents = TestPlayers["Player A"].ReceivedEvents;
-            var gameEvent = receivedEvents.Take();
-            Assert.That(gameEvent, Is.EqualTo(new Event("To Player A", "Please take your cards!")));
-            gameEvent = receivedEvents.Take();
-            Assert.That(gameEvent, Is.EqualTo(new Event("To Player A", "Please bid!")));
+            await ProcessEvents(input);
         }
     }
 }

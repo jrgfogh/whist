@@ -1,31 +1,44 @@
-﻿namespace Whist.Rules
+﻿using System.Diagnostics;
+using System.Linq;
+
+namespace Whist.Rules
 {
     public sealed class BiddingRound
     {
-        private int _playerA;
-        private int _playerB = 1;
-        private bool _playerAsTurn = true;
+        private readonly bool[] _hasPassed = new bool[4];
+        private string _lastBid;
+        private int _lastPlayerToBid = -1;
 
         public void Bid(string bid)
         {
             if (bid.Equals("pass", System.StringComparison.OrdinalIgnoreCase))
-            {
-                if (_playerAsTurn) _playerA = _playerB;
-                _playerB++;
-            }
+                _hasPassed[PlayerToBid] = true;
             else
             {
-                _playerAsTurn = !_playerAsTurn;
-                Winner = PlayerToBid;
-                WinningBid = bid;
+                _lastPlayerToBid = PlayerToBid;
+                _lastBid = bid;
             }
-
-            PlayerToBid = _playerAsTurn ? _playerA : _playerB;
         }
 
-        public bool IsBiddingDone => PlayerToBid == 4;
-        public int PlayerToBid { get; private set; }
-        public int Winner { get; private set; }
-        public string? WinningBid { get; private set; }
+        public bool IsBiddingDone => (_hasPassed.Count(x => x) == 3 && _lastBid != null) ||
+            // TODO(jrgfogh): Test this line:
+            _hasPassed.Count(x => x) == 4;
+        public int PlayerToBid
+        {
+            get
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    if (!_hasPassed[i] &&
+                        i != _lastPlayerToBid)
+                    {
+                        return i;
+                    }
+                }
+                throw new UnreachableException("No player can bid!");
+            }
+        }
+        public int Winner { get { return _lastPlayerToBid; } }
+        public string? WinningBid { get { return _lastBid; } }
     }
 }

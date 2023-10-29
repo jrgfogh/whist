@@ -14,8 +14,14 @@ namespace Whist.Rules.Tests
 
         [Test]
         [TestCase("Player A bids pass", 1)]
+        [TestCase("Player A bids pass\n" +
+                  "Player B bids pass\n" +
+                  "Player C bids pass", 3)]
         [TestCase("Player A bids 7 common\n" +
-            "Player B bids 8 common", 0)]
+                  "Player B bids 8 common", 0)]
+        [TestCase("Player A bids 7 common\n" +
+                  "Player B bids 8 common\n" +
+                  "Player A bids pass", 2)]
         [TestCase("Player A bids 7 common\n" +
                   "Player B bids pass", 2)]
         [TestCase("Player A bids 7 common\n" +

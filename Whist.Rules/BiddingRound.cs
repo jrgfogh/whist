@@ -6,7 +6,7 @@ namespace Whist.Rules
     public sealed class BiddingRound
     {
         private readonly bool[] _hasPassed = new bool[4];
-        private string _lastBid;
+        private string? _lastBid;
         private int _lastPlayerToBid = -1;
 
         public void Bid(string bid)

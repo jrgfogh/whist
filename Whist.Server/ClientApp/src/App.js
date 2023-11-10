@@ -2,18 +2,17 @@ import React, { useState, useReducer, useEffect } from "react";
 import { Routes, Route } from "react-router";
 import { Layout } from "./components/Layout";
 import { Home } from "./components/Home";
-import { connect } from "./network";
 import gameStateReducer from "./gameStateReducer";
 
 import "./custom.css"
 
-export default function App(props) {
+export default function App({connect}) {
     const [connection, setConnection] = useState(null);
     const [gameState, dispatch] = useReducer(gameStateReducer, { state: "connecting" });
 
     useEffect(() => {
         setConnection(connect(dispatch));
-    }, []);
+    }, [connect]);
 
     return (
       <Layout>

@@ -35,7 +35,7 @@ namespace Whist.Server.Tests
             return new Event(sender, message);
         }
 
-        protected static IEnumerable<Event> ParseEvents(string input) =>
+        private static IEnumerable<Event> ParseEvents(string input) =>
             input.Split(Environment.NewLine).Select(ParseEvent);
 
         private static string ServerPath() =>
@@ -95,7 +95,7 @@ namespace Whist.Server.Tests
             connection.On("AnnouncePlayerName", (int index, string name) =>
                     TestPlayers[playerName].ReceivedEvents.Add(new Event($"To {playerName}",
                         $"Player {index}'s name is {name}")));
-            connection.On("ReceiveDealtCards", (IEnumerable<string> cards) =>
+            connection.On("ReceiveDealtCards", (IEnumerable<string> _) =>
                     TestPlayers[playerName].ReceivedEvents.Add(new Event($"To {playerName}", "Please take your cards!")));
             connection.On("AnnounceBiddingWinner", (string winner, string bid) =>
                     TestPlayers[playerName].ReceivedEvents.Add(new Event($"To {playerName}",
@@ -108,10 +108,10 @@ namespace Whist.Server.Tests
             TestPlayers[playerName] = new TestPlayer(connection);
         }
 
-        protected HubConnection GetConnection(string sender) =>
+        private HubConnection GetConnection(string sender) =>
             TestPlayers[sender].Connection;
 
-        protected async Task SendChoice(Event expectedEvent)
+        private async Task SendChoice(Event expectedEvent)
         {
             await GetConnection(expectedEvent.Sender).SendAsync("SendChoice", TrimMessage(expectedEvent)).ConfigureAwait(false);
         }

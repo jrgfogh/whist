@@ -108,7 +108,7 @@ namespace Whist.Server
             await _gameTaskManager.StopGame();
         }
 
-        public string UserName(string connectionId)
+        private string UserName(string connectionId)
         {
             lock (_connectionIdsSyncLock)
             {

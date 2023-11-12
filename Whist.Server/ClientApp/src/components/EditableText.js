@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 
 export function EditableText(props) {
     const [isEditing, setIsEditing] = useState(false);
@@ -23,6 +23,6 @@ export function EditableText(props) {
                 onSubmit={saveEdit}
                 onBlur={saveEdit} />);
     else
-        return (<button className="btn w-75 float-left text-left" onClick={() =>
+        return (<button className="btn w-75 float-left text-start" onClick={() =>
             setIsEditing(true)}>{ props.text }</button>);
 }

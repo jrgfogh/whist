@@ -1,7 +1,6 @@
 # whist
 [![Build Status](https://dev.azure.com/jrgfogh/jrgfogh-whist/_apis/build/status/jrgfogh.whist?branchName=master)](https://dev.azure.com/jrgfogh/jrgfogh-whist/_build/latest?definitionId=1&branchName=master)
 [![CodeQL](https://github.com/jrgfogh/whist/actions/workflows/codeql.yml/badge.svg)](https://github.com/jrgfogh/whist/actions/workflows/codeql.yml)
-[![SonarCloud analysis](https://github.com/jrgfogh/whist/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/jrgfogh/whist/actions/workflows/sonarcloud.yml)
 
 ***NOTE: The game is not finished and not even playable at the moment.***
 

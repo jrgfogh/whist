@@ -11,6 +11,10 @@ stages:
   - job: build
     displayName: Build and Test
     steps:
+    - task: UseDotNet@2
+      displayName: 'Install .NET Core SDK'
+      inputs:
+        version: '9.x'
     - script: dotnet build --configuration $(buildConfiguration)
       displayName: 'dotnet build $(buildConfiguration)'
     - task: DotNetCoreCLI@2

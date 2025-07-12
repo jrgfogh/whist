@@ -6,7 +6,7 @@
     "@babel/eslint-parser": "^7.19.1",
     "@microsoft/signalr": "^7.0.0",
     "bootstrap": "^5.2.3",
-    "http-proxy-middleware": "^2.0.6",
+    "http-proxy-middleware": "^2.0.9",
     "jest-junit": "^15.0.0",
     "merge": "^2.1.1",
     "react": "^18.2.0",

@@ -1,0 +1,19 @@
+# Git
+.git
+
+# Build outputs
+**/bin/
+**/obj/
+
+# Node modules and React build output
+**/node_modules/
+**/ClientApp/build/
+
+# Test results
+**/TestResults/
+**/junit.xml
+
+# IDE / tooling
+.vs/
+*.user
+*.suo

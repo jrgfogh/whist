@@ -6,7 +6,7 @@ import App from "./App";
 import { connect } from "./network";
 import registerServiceWorker from "./registerServiceWorker";
 
-const baseUrl = document.getElementsByTagName("base")[0].getAttribute("href");
+const baseUrl = new URL(document.getElementsByTagName("base")[0].href).pathname;
 const rootElement = document.getElementById("root");
 
 const root = createRoot(rootElement);

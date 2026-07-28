@@ -2,6 +2,7 @@
   "name": "whist.server",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@microsoft/signalr": "^7.0.14",
     "bootstrap": "^5.3.7",

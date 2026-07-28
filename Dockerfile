@@ -9,13 +9,19 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
 
 WORKDIR /src
 
+# Store NuGet packages inside the image layer so they are available to all
+# subsequent RUN steps. The BuildKit cache mount is used only for the HTTP
+# download cache (~/.local/share/NuGet/http-cache) so repeated builds on the
+# same host skip re-downloading without hiding packages from later stages.
+ENV NUGET_PACKAGES=/nuget/packages
+
 # Restore .NET packages (layer cached until .csproj files change)
 COPY Whist.sln .
 COPY Whist.Rules/Whist.Rules.csproj Whist.Rules/
 COPY Whist.Rules.Tests/Whist.Rules.Tests.csproj Whist.Rules.Tests/
 COPY Whist.Server/Whist.Server.csproj Whist.Server/
 COPY Whist.Server.Tests/Whist.Server.Tests.csproj Whist.Server.Tests/
-RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
+RUN --mount=type=cache,id=nuget-http,target=/root/.local/share/NuGet/http-cache \
     dotnet restore
 
 # Install npm packages (layer cached until package-lock.json changes)

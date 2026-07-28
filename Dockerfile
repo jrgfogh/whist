@@ -42,10 +42,6 @@ RUN npm --prefix Whist.Server/ClientApp test
 FROM test AS publish
 RUN dotnet publish Whist.Server/Whist.Server.csproj -c Release --no-build -o /app/publish
 
-# Export publish output for CI artifact extraction
-FROM scratch AS export
-COPY --from=publish /app/publish /
-
 # Minimal runtime image for container deployment
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app

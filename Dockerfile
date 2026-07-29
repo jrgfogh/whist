@@ -25,9 +25,9 @@ RUN --mount=type=cache,id=nuget-http,target=/root/.local/share/NuGet/http-cache 
     dotnet restore
 
 # Install npm packages (layer cached until package-lock.json changes)
-COPY Whist.Server/ClientApp/package.json Whist.Server/ClientApp/package-lock.json Whist.Server/ClientApp/
+COPY client/package.json client/package-lock.json client/
 RUN --mount=type=cache,id=npm,target=/root/.npm \
-    npm ci --prefix Whist.Server/ClientApp
+    npm ci --prefix client
 
 # Copy remaining source and build
 COPY . .
@@ -36,7 +36,7 @@ RUN dotnet build --no-restore -c Release
 # Run all tests (fails the build if any test fails)
 FROM build AS test
 RUN dotnet test --no-build -c Release --blame-hang-timeout 1m
-RUN npm --prefix Whist.Server/ClientApp test
+RUN npm --prefix client test
 
 # Publish (only reachable if all tests pass)
 FROM test AS publish

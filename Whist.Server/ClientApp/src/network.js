@@ -3,7 +3,7 @@
 export function connect(dispatch) {
     const connection = new signalR.HubConnectionBuilder()
         .configureLogging(signalR.LogLevel.Information)
-        .withUrl("/WhistHub")
+        .withUrl(new URL("WhistHub", document.baseURI).href)
         .build();
     connection.on("ReceiveDealtCards", (cards) => { dispatch({ type: "receive-cards", cards: cards }); });
     connection.on("AnnounceBiddingWinner", (winner, bid) => { dispatch({ type: "bidding-winner", winner: winner, bid: bid }); });

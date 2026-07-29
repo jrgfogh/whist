@@ -6,7 +6,7 @@
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-    <SpaProxyServerUrl>https://localhost:44495</SpaProxyServerUrl>
+    <SpaProxyServerUrl>http://localhost:5173</SpaProxyServerUrl>
     <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
     <UserSecretsId>c8862ffc-54d7-4b72-a828-46282983955f</UserSecretsId>
     <Nullable>enable</Nullable>

@@ -29,6 +29,8 @@ export default defineConfig(({ command }) => {
       },
     },
     server: {
+      // HTTP is intentional: this app uses no cookie-based auth, so there is
+      // no need for a dev HTTPS certificate (unlike the removed aspnetcore-react.js).
       port: 5173,
       proxy: {
         '/WhistHub': {

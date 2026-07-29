@@ -13,9 +13,6 @@ A whist game implemented with danish rules.
 * .NET Core
 * SignalR
 * NUnit
-* Azure
-  * Linux Web App
-  * SignalR Service
 * React
 
 ## Card Assets
@@ -25,22 +22,6 @@ and are licensed under the LGPL 3.0.
 
 The original cards were created by Chris Aguilar. The Ace of Spades was by Byron Knoll.
 The cards were optimized by Mike Hall with help from Warren Lockhart.
-
-# Lessons learned
-The main lesson learned for me is how poor the technology stack still is all around.
-
-Microsoft's default React.js template contains a serious security flaw.
-The client code contains syntax errors, which could easily have been detected by a lint tool.
-
-The upgrade experience for npm packages is poor. (This is not specific to the .NET platform.)
-
-The upgrade experience to .NET 5 is also poor. The NuGet UI in Visual Studio correctly tells me
-that the platform version must be changed before the packages can be changed. However, there
-does not seem to be a centralized place to make the change for all projects in the solution.
-Each project file has to be opened and edited manually, since the NuGet UI can still not update
-the packages after the platform has been changed using search&replace.
-
-The Azure Devops had to be updated too, since it kept clearing the "Stack" settings for the Azure App Service.
 
 ---
 

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, transformWithEsbuild } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig(({ command }) => {
@@ -8,10 +8,25 @@ export default defineConfig(({ command }) => {
     : 'https://localhost:5001';
 
   return {
-    plugins: [react()],
+    plugins: [
+      // Allow JSX in .js files (project predates the .jsx convention)
+      {
+        name: 'treat-js-files-as-jsx',
+        async transform(code, id) {
+          if (!id.match(/src\/.*\.js$/)) return null;
+          return transformWithEsbuild(code, id, { loader: 'jsx', jsx: 'automatic' });
+        },
+      },
+      react({ include: /\.(js|jsx|ts|tsx)$/ }),
+    ],
     base: command === 'build' ? '/whist/' : '/',
     build: {
       outDir: 'build',
+    },
+    optimizeDeps: {
+      esbuildOptions: {
+        loader: { '.js': 'jsx' },
+      },
     },
     server: {
       port: 5173,

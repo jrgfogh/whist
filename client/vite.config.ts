@@ -21,7 +21,7 @@ export default defineConfig(({ command }) => {
     ],
     base: command === 'build' ? '/whist/' : '/',
     build: {
-      outDir: 'build',
+      outDir: 'dist',
     },
     optimizeDeps: {
       esbuildOptions: {

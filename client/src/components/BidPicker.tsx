@@ -1,21 +1,34 @@
-function range(min, max) {
+import React from "react";
+import type { HubConnection } from "@microsoft/signalr";
+import type { Dispatch } from "react";
+import type { Bid, GameAction } from "../gameStateReducer";
+
+function range(min: number, max: number): number[] {
   return [...Array(max - min + 1).keys()].map(i => i + min);
 }
 
-export function BidPicker(props) {
-  function sendBid(bid) {
+interface BidPickerProps {
+    state: string;
+    bids: Bid[];
+    dispatch: Dispatch<GameAction>;
+    connection: HubConnection | null;
+}
+
+export function BidPicker(props: BidPickerProps) {
+  function sendBid(bid: string) {
     return async function() {
-      props.dispatch({ type: "user-chose-bid", choice: bid });
-      await props.connection.invoke("SendChoice", bid);
+      props.dispatch({ type: "user-chose-bid" });
+      await props.connection?.invoke("SendChoice", bid);
     }
   }
 
-  function button(bid) {
-    return <td key={bid}><button type="button"
-      disabled={!props.state.endsWith("choosing-bid")} onClick={sendBid(bid)}>Bid!</button></td>;
+  function button(bid: string | number) {
+    const bidStr = String(bid);
+    return <td key={bidStr}><button type="button"
+      disabled={!props.state.endsWith("choosing-bid")} onClick={sendBid(bidStr)}>Bid!</button></td>;
   }
 
-  function buttonRow(postfix) {
+  function buttonRow(postfix: string) {
     return range(6, 13).map(element =>
       button(element + postfix));
   }
@@ -48,7 +61,7 @@ export function BidPicker(props) {
         </tbody>
       </table>
       <div>
-        {props.bids.map((bid, index) => {
+        {props.bids.map((bid) => {
           const bidDescription = bid.bidder + " bid " + bid.bid;
           return <p key={bidDescription}>{bidDescription}</p>;
         })}

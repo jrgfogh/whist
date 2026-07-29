@@ -1,6 +1,12 @@
-﻿import { EditableText } from "./EditableText";
+import React from "react";
+import { EditableText } from "./EditableText";
 
-export function Lobby(props) {
+interface LobbyProps {
+    playerNames: string[];
+    savePlayerName: (oldName: string, newName: string) => void;
+}
+
+export function Lobby(props: LobbyProps) {
     return (<div>
             <h1>Player Names</h1>
             <ul className="list-group">

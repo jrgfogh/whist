@@ -8,7 +8,7 @@ it('renders without crashing', async () => {
   const root = createRoot(div);
   root.render(
     <MemoryRouter>
-      <App connect={(dispatch) => "Dummy connection"} />
+      <App connect={(_dispatch) => "Dummy connection" as never} />
     </MemoryRouter>);
   await new Promise(resolve => setTimeout(resolve, 1000));
 });

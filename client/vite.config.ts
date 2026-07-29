@@ -1,4 +1,4 @@
-import { defineConfig, transformWithEsbuild } from 'vite'
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig(({ command }) => {
@@ -9,25 +9,13 @@ export default defineConfig(({ command }) => {
 
   return {
     plugins: [
-      // Allow JSX in .js files (project predates the .jsx convention)
-      {
-        name: 'treat-js-files-as-jsx',
-        async transform(code, id) {
-          if (!id.match(/src\/.*\.js$/)) return null;
-          return transformWithEsbuild(code, id, { loader: 'jsx', jsx: 'automatic' });
-        },
-      },
-      react({ include: /\.(js|jsx|ts|tsx)$/ }),
+      react(),
     ],
     base: command === 'build' ? '/whist/' : '/',
     build: {
       outDir: 'dist',
     },
-    optimizeDeps: {
-      esbuildOptions: {
-        loader: { '.js': 'jsx' },
-      },
-    },
+    optimizeDeps: {},
     server: {
       // HTTP is intentional: this app uses no cookie-based auth, so there is
       // no need for a dev HTTPS certificate (unlike the removed aspnetcore-react.js).

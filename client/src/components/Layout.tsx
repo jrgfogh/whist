@@ -1,8 +1,12 @@
-import React, { Component } from "react";
+import React, { Component, type ReactNode } from "react";
 import { Container } from "reactstrap";
 import { NavMenu } from "./NavMenu";
 
-export class Layout extends Component {
+interface LayoutProps {
+    children?: ReactNode;
+}
+
+export class Layout extends Component<LayoutProps> {
   render () {
     return (
       <div>

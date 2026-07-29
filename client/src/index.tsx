@@ -7,6 +7,7 @@ import { connect } from "./network";
 import registerServiceWorker from "./registerServiceWorker";
 
 const rootElement = document.getElementById("root");
+if (!rootElement) throw new Error("Root element not found");
 
 const root = createRoot(rootElement);
 root.render(
@@ -15,4 +16,3 @@ root.render(
   </BrowserRouter>);
 
 registerServiceWorker();
-

@@ -6,12 +6,11 @@ import App from "./App";
 import { connect } from "./network";
 import registerServiceWorker from "./registerServiceWorker";
 
-const baseUrl = new URL(document.getElementsByTagName("base")[0].href).pathname;
 const rootElement = document.getElementById("root");
 
 const root = createRoot(rootElement);
 root.render(
-  <BrowserRouter basename={baseUrl}>
+  <BrowserRouter basename={import.meta.env.BASE_URL}>
     <App connect={connect} />
   </BrowserRouter>);
 

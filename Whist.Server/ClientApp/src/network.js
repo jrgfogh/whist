@@ -1,10 +1,9 @@
 ﻿import * as signalR from "@microsoft/signalr"
 
 export function connect(dispatch) {
-    const baseUrl = document.getElementsByTagName("base")[0].href;
     const connection = new signalR.HubConnectionBuilder()
         .configureLogging(signalR.LogLevel.Information)
-        .withUrl(new URL("WhistHub", baseUrl).href)
+        .withUrl(new URL("WhistHub", document.baseURI).href)
         .build();
     connection.on("ReceiveDealtCards", (cards) => { dispatch({ type: "receive-cards", cards: cards }); });
     connection.on("AnnounceBiddingWinner", (winner, bid) => { dispatch({ type: "bidding-winner", winner: winner, bid: bid }); });

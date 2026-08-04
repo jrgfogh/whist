@@ -15,7 +15,7 @@ RUN npm test
 RUN npm run build
 
 # ── .NET build stage ───────────────────────────────────────────────────────────
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 WORKDIR /src
 
@@ -49,7 +49,7 @@ COPY --from=client-build /client/dist ./Whist.Server/wwwroot/
 RUN dotnet publish Whist.Server/Whist.Server.csproj -c Release --no-build -o /app/publish
 
 # Minimal runtime image for container deployment
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 EXPOSE 8080

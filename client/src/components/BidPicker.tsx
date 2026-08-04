@@ -17,15 +17,14 @@ interface BidPickerProps {
 export function BidPicker(props: BidPickerProps) {
   function sendBid(bid: string) {
     return async function() {
-      props.dispatch({ type: "user-chose-bid" });
+      props.dispatch({ type: "user-chose-bid", choice: bid });
       await props.connection?.invoke("SendChoice", bid);
     }
   }
 
-  function button(bid: string | number) {
-    const bidStr = String(bid);
-    return <td key={bidStr}><button type="button"
-      disabled={!props.state.endsWith("choosing-bid")} onClick={sendBid(bidStr)}>Bid!</button></td>;
+  function button(bid: string) {
+    return <td key={bid}><button type="button"
+      disabled={!props.state.endsWith("choosing-bid")} onClick={sendBid(bid)}>Bid!</button></td>;
   }
 
   function buttonRow(postfix: string) {

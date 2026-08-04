@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Program = Whist.Server.ProgramEntryPoint;
 
 namespace Whist.Server.Tests
 {
@@ -47,7 +46,7 @@ namespace Whist.Server.Tests
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
             Environment.CurrentDirectory = ServerPath();
-            Host = Program.BuildApplication(
+            Host = ProgramEntryPoint.BuildApplication(
                 Array.Empty<string>(),
                 webHost =>
                 {

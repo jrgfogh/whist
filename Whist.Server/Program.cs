@@ -5,7 +5,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-return ProgramEntryPoint.BuildApplication(args).Run();
+ProgramEntryPoint.BuildApplication(args).Run();
 
 namespace Whist.Server
 {

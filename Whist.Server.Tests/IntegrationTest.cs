@@ -46,17 +46,17 @@ namespace Whist.Server.Tests
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
             Environment.CurrentDirectory = ServerPath();
-            Host = Program.CreateHostBuilder(Array.Empty<string>())
-                .ConfigureWebHostDefaults(webBuilder =>
+            Host = ProgramEntryPoint.BuildApplication(
+                Array.Empty<string>(),
+                webHost =>
                 {
-                    webBuilder.UseKestrel();
-                    webBuilder.UseUrls(TestUrl);
-                })
-                .ConfigureServices(services =>
+                    webHost.UseKestrel();
+                    webHost.UseUrls(TestUrl);
+                },
+                services =>
                 {
                     services.AddSingleton<IConductorService, TConductorService>();
-                })
-                .Build();
+                });
             await Host.StartAsync();
         }
 

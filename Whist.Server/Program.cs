@@ -1,20 +1,51 @@
+using Whist.Server;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using System;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
+ProgramEntryPoint.BuildApplication(args).Run();
 
 namespace Whist.Server
 {
-    public static class Program
+    public static class ProgramEntryPoint
     {
-        public static void Main(string[] args)
+        public static WebApplication BuildApplication(string[] args, Action<IWebHostBuilder>? configureWebHost = null, Action<IServiceCollection>? configureServices = null)
         {
-            CreateHostBuilder(args).Build().Run();
-        }
+            var builder = WebApplication.CreateBuilder(args);
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+            configureWebHost?.Invoke(builder.WebHost);
+
+            builder.Services.AddControllersWithViews();
+            builder.Services.AddSignalR();
+            builder.Services.AddSingleton<IConductorService, GameConductorService>();
+            configureServices?.Invoke(builder.Services);
+
+            var app = builder.Build();
+
+            app.UsePathBase("/whist");
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                app.UseHsts();
+            }
+
+            app.UseStaticFiles();
+            app.UseRouting();
+
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller}/{action=Index}/{id?}");
+            app.MapHub<WhistHub>("/WhistHub");
+            app.MapFallbackToFile("index.html");
+
+            return app;
+        }
     }
 }

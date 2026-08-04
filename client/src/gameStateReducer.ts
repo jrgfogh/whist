@@ -20,7 +20,7 @@ export type GameAction =
     | { type: "prompt-for-trump" }
     | { type: "prompt-for-buddy-ace" }
     | { type: "prompt-for-card" }
-    | { type: "user-chose-bid" }
+    | { type: "user-chose-bid"; choice: string }
     | { type: "user-chose-trump" }
     | { type: "user-chose-buddy-ace" }
     | { type: "user-chose-card"; card: string }

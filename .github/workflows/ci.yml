@@ -100,23 +100,20 @@ jobs:
           -p:ContainerArchiveOutputPath=${{ runner.temp }}/whist-image.tar.gz
           -p:ContainerImageTags=${{ github.sha }}
 
-      - name: Publish commit image to GitHub Container Registry
+      - name: Publish images to GitHub Container Registry
         if: github.event_name == 'push'
-        run: >
-          dotnet publish Whist.Server/Whist.Server.csproj
-          -c Release
-          /t:PublishContainer
-          -p:ContainerRegistry=ghcr.io
-          -p:ContainerImageTags=${{ github.sha }}
+        run: |
+          dotnet publish Whist.Server/Whist.Server.csproj \
+            -c Release \
+            /t:PublishContainer \
+            -p:ContainerRegistry=ghcr.io \
+            -p:ContainerImageTags=${{ github.sha }}
 
-      - name: Publish latest image to GitHub Container Registry
-        if: github.event_name == 'push'
-        run: >
-          dotnet publish Whist.Server/Whist.Server.csproj
-          -c Release
-          /t:PublishContainer
-          -p:ContainerRegistry=ghcr.io
-          -p:ContainerImageTags=latest
+          dotnet publish Whist.Server/Whist.Server.csproj \
+            -c Release \
+            /t:PublishContainer \
+            -p:ContainerRegistry=ghcr.io \
+            -p:ContainerImageTags=latest
 
   # Deploy the Docker image to an Akamai Cloud (Linode) server via SSH.
   # Required repository secrets:

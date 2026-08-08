@@ -4,7 +4,14 @@
     <IsPackable>false</IsPackable>
     <UserSecretsId>c8862ffc-54d7-4b72-a828-46282983955f</UserSecretsId>
     <Nullable>enable</Nullable>
+    <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
+    <ContainerRepository>jrgfogh/whist</ContainerRepository>
+    <ContainerImageTags>latest</ContainerImageTags>
+    <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:10.0</ContainerBaseImage>
   </PropertyGroup>
+  <ItemGroup>
+    <ContainerPort Include="8080" Type="tcp" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Whist.Rules\Whist.Rules.csproj" />
   </ItemGroup>

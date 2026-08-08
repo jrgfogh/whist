@@ -116,6 +116,7 @@ jobs:
           -c Release
           /t:PublishContainer
           -p:ContainerRegistry=ghcr.io
+          -p:ContainerImageTags=latest
 
   # Deploy the Docker image to an Akamai Cloud (Linode) server via SSH.
   # Required repository secrets:

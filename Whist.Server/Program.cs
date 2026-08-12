@@ -34,16 +34,20 @@ namespace Whist.Server
             {
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
+                app.UseStaticFiles();
             }
 
-            app.UseStaticFiles();
             app.UseRouting();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller}/{action=Index}/{id?}");
             app.MapHub<WhistHub>("/WhistHub");
-            app.MapFallbackToFile("index.html");
+
+            if (!app.Environment.IsDevelopment())
+            {
+                app.MapFallbackToFile("index.html");
+            }
 
             return app;
         }

@@ -4,6 +4,9 @@
     <IsPackable>false</IsPackable>
     <UserSecretsId>c8862ffc-54d7-4b72-a828-46282983955f</UserSecretsId>
     <Nullable>enable</Nullable>
+    <SpaRoot>..\client\</SpaRoot>
+    <SpaProxyServerUrl>http://localhost:5173</SpaProxyServerUrl>
+    <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
     <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
     <ContainerRepository>jrgfogh/whist</ContainerRepository>
     <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:10.0</ContainerBaseImage>
@@ -13,5 +16,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Whist.Rules\Whist.Rules.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="10.0.0" />
   </ItemGroup>
 </Project>

@@ -24,6 +24,7 @@ export default defineConfig(({ command }) => {
         '/WhistHub': {
           target,
           secure: false,
+          changeOrigin: true,
           ws: true,
         },
       },

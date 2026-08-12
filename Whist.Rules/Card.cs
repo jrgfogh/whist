@@ -2,9 +2,9 @@
 
 namespace Whist.Rules
 {
-    public sealed class Card
+    public sealed class Card(string name)
     {
-        private readonly string _name;
+        private readonly string _name = name ?? throw new ArgumentNullException(nameof(name));
 
         private const string Joker = "Joker";
 
@@ -20,8 +20,6 @@ namespace Whist.Rules
                 'J' => 11,
                 _ => int.Parse(_name[1..])
             };
-
-        public Card(string name) => _name = name ?? throw new ArgumentNullException(nameof(name));
 
         private bool Equals(Card other)
         {

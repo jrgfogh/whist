@@ -6,16 +6,9 @@ using System.Threading.Tasks;
 namespace Whist.Rules
 {
     // TODO(jrgfogh): Test this!
-    public sealed class GameConductor
+    public sealed class GameConductor(IMovePrompter movePrompter)
     {
-        private readonly IMovePrompter _movePrompter;
-
         private List<Card> _cat = new();
-
-        public GameConductor(IMovePrompter movePrompter)
-        {
-            _movePrompter = movePrompter;
-        }
 
         public async Task ConductGame()
         {
@@ -31,7 +24,7 @@ namespace Whist.Rules
 
         private async Task ConductPlayingRoundAsync(string winningBid, string trump)
         {   
-            await _movePrompter.StartPlaying();
+            await movePrompter.StartPlaying();
             var round = new PlayingRound(CreateTrickEvaluator(winningBid, trump.Last()));
             // TODO(JRGF): Test the loop bound:
             for (var i = 0; i < 13; i++)
@@ -45,7 +38,7 @@ namespace Whist.Rules
         {
             int? winner = null;
             while (winner == null)
-                winner = round.Play(new Card(await _movePrompter.PromptForCard(round.PlayerToPlay)));
+                winner = round.Play(new Card(await movePrompter.PromptForCard(round.PlayerToPlay)));
             return (int)winner;
         }
 
@@ -53,33 +46,33 @@ namespace Whist.Rules
         {
             // TODO(jrgfogh): Player 0 should not always start bidding.
             var round = new BiddingRound();
-            while (!round.IsBiddingDone) round.Bid(await _movePrompter.PromptForBid(round.PlayerToBid));
+            while (!round.IsBiddingDone) round.Bid(await movePrompter.PromptForBid(round.PlayerToBid));
             return (round.Winner, round.WinningBid!);
         }
 
         private async Task AnnounceWinnerAsync(int winner) =>
-            await _movePrompter.AnnounceWinner(PlayerName(winner));
+            await movePrompter.AnnounceWinner(PlayerName(winner));
 
         private async Task AnnounceBiddingWinner(int winner, string winningBid) =>
-            await _movePrompter.AnnounceBiddingWinner(PlayerName(winner), winningBid);
+            await movePrompter.AnnounceBiddingWinner(PlayerName(winner), winningBid);
 
         private async Task DealCards()
         {
             var deck = new Deck();
             foreach (var playerIndex in Enumerable.Range(0, 4))
-                await _movePrompter.DealCards(playerIndex, deck.DealCards(13));
+                await movePrompter.DealCards(playerIndex, deck.DealCards(13));
             _cat = deck.DealCards(3);
         }
 
         private async Task<string> PromptForTrump(int winner, string winningBid)
         {
             if (winningBid.EndsWith("common", StringComparison.InvariantCultureIgnoreCase))
-                return await _movePrompter.PromptForTrump(winner);
+                return await movePrompter.PromptForTrump(winner);
             return "C";
         }
 
         private async Task<string> PromptForBuddyAce(int winner) =>
-            await _movePrompter.PromptForBuddyAce(winner);
+            await movePrompter.PromptForBuddyAce(winner);
 
         // TODO(jrgfogh): Move this factory method.
         private static TrickEvaluator CreateTrickEvaluator(string winningBid, char trump)

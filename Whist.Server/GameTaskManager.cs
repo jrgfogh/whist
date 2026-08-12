@@ -5,16 +5,10 @@ using Whist.Rules;
 
 namespace Whist.Server;
 
-public sealed class GameTaskManager : IAsyncDisposable
+public sealed class GameTaskManager(IMovePrompter movePrompter) : IAsyncDisposable
 {
-    private readonly IMovePrompter _movePrompter;
     private CancellationTokenSource? _cancellationTokenSource;
     private Task? _gameTask;
-
-    public GameTaskManager(IMovePrompter movePrompter)
-    {
-        _movePrompter = movePrompter;
-    }
 
     public async ValueTask DisposeAsync() => await StopGame();
 
@@ -23,7 +17,7 @@ public sealed class GameTaskManager : IAsyncDisposable
         _cancellationTokenSource = new CancellationTokenSource();
         _gameTask = Task.Run(async () =>
         {
-            var gameConductor = new GameConductor(_movePrompter);
+            var gameConductor = new GameConductor(movePrompter);
             await gameConductor.ConductGame().WaitAsync(_cancellationTokenSource.Token).ConfigureAwait(false);
         });
     }

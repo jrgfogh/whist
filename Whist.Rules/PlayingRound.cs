@@ -2,15 +2,9 @@
 
 namespace Whist.Rules
 {
-    public sealed class PlayingRound
+    public sealed class PlayingRound(TrickEvaluator evaluator)
     {
-        private readonly TrickEvaluator _evaluator;
         private readonly List<Card> _cardsInTrick = new();
-
-        public PlayingRound(TrickEvaluator evaluator)
-        {
-            _evaluator = evaluator;
-        }
 
         public int? Play(Card card)
         {
@@ -23,7 +17,7 @@ namespace Whist.Rules
 
         private int WinnerTakesTrick()
         {
-            var winner = _evaluator.EvaluateTrick(_cardsInTrick);
+            var winner = evaluator.EvaluateTrick(_cardsInTrick);
             _cardsInTrick.Clear();
             PlayerToPlay = winner;
             return winner;

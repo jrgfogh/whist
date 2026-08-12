@@ -24,7 +24,8 @@ public sealed class GameTaskManager(IMovePrompter movePrompter) : IAsyncDisposab
 
     public async Task StopGame()
     {
-        _cancellationTokenSource?.Cancel();
+        var task = _cancellationTokenSource?.CancelAsync();
+        if (task != null) await task;
         try
         {
             if (_gameTask != null)

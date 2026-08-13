@@ -16,6 +16,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Whist.Rules\Whist.Rules.csproj" />
+    <ProjectReference Include="..\client\client.esproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="10.0.0" />
   </ItemGroup>
 </Project>

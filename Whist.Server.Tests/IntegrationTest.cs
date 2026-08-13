@@ -12,16 +12,11 @@ namespace Whist.Server.Tests
         // The different tests can't bind to the same port:
         protected abstract string TestUrl { get; }
 
-        protected sealed class TestPlayer
+        protected sealed class TestPlayer(HubConnection connection)
         {
             public readonly BlockingCollection<Event> ReceivedEvents = new();
             // TODO(jrgfogh): Use System.Threading.Channels instead?
-            public readonly HubConnection Connection;
-
-            public TestPlayer(HubConnection connection)
-            {
-                Connection = connection;
-            }
+            public readonly HubConnection Connection = connection;
         }
 
         protected IHost Host = null!;

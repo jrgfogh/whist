@@ -3,18 +3,11 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Whist.Server
 {
-    public sealed class WhistHub : Hub<IWhistClient>
+    public sealed class WhistHub(IConductorService conductorService) : Hub<IWhistClient>
     {
-        private readonly IConductorService _conductorService;
-
-        public WhistHub(IConductorService conductorService)
-        {
-            _conductorService = conductorService;
-        }
-
         public Task SendChoice(string choice)
         {
-            return _conductorService.ReceiveChoice(Context.ConnectionId, choice);
+            return conductorService.ReceiveChoice(Context.ConnectionId, choice);
         }
     }
 }

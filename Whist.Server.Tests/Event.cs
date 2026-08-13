@@ -1,16 +1,10 @@
 ﻿namespace Whist.Server.Tests
 {
-    public sealed class Event
+    public sealed class Event(string sender, string message)
     {
-        public readonly string Sender;
+        public readonly string Sender = sender;
 
-        public readonly string Message;
-
-        public Event(string sender, string message)
-        {
-            Sender = sender;
-            Message = message;
-        }
+        public readonly string Message = message;
 
         public override bool Equals(object? obj)
         {

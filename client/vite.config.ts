@@ -33,6 +33,10 @@ export default defineConfig(({ command }) => {
     test: {
       environment: 'jsdom',
       globals: true,
+      coverage: {
+        provider: 'v8',
+        reporter: ['lcov', 'text-summary'],
+      },
       projects: [
         {
           extends: true,

@@ -74,7 +74,9 @@ jobs:
       - name: Upload .NET coverage to Coveralls
         uses: coverallsapp/github-action@v2
         with:
-          file: '**/coverage.cobertura.xml'
+          files: >-
+            Whist.Rules.Tests/**/coverage.cobertura.xml
+            Whist.Server.Tests/**/coverage.cobertura.xml
           format: cobertura
           flag-name: dotnet
           parallel: true

@@ -69,14 +69,18 @@ jobs:
         run: dotnet build --no-restore -c Release
 
       - name: Test
-        run: dotnet test --no-build -c Release --blame-hang-timeout 1m --collect:"XPlat Code Coverage"
+        run: dotnet test --no-build -c Release --blame-hang-timeout 1m --collect:"XPlat Code Coverage" --results-directory TestResults
+
+      - name: Find coverage files
+        id: coverage
+        run: |
+          FILES=$(find TestResults -name "coverage.cobertura.xml" | tr '\n' ' ')
+          echo "files=$FILES" >> $GITHUB_OUTPUT
 
       - name: Upload .NET coverage to Coveralls
         uses: coverallsapp/github-action@v2
         with:
-          files: >-
-            Whist.Rules.Tests/**/coverage.cobertura.xml
-            Whist.Server.Tests/**/coverage.cobertura.xml
+          files: ${{ steps.coverage.outputs.files }}
           format: cobertura
           flag-name: dotnet
           parallel: true

@@ -31,7 +31,7 @@ jobs:
         run: npm run build
 
       - name: Install Playwright browser
-        run: npx playwright install chromium
+        run: npx playwright install chromium --with-deps
 
       - name: Upload client assets
         uses: actions/upload-artifact@v7

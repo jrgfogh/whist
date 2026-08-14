@@ -92,6 +92,7 @@ jobs:
         uses: coverallsapp/github-action@v2
         with:
           parallel-finished: true
+          coverage-threshold: 20
           coveralls-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
   build-container:

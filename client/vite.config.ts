@@ -36,6 +36,12 @@ export default defineConfig(({ command }) => {
       coverage: {
         provider: 'v8',
         reporter: ['lcov', 'text-summary'],
+        thresholds: {
+          lines: 20,
+          functions: 20,
+          branches: 20,
+          statements: 20,
+        },
       },
       projects: [
         {

@@ -1,5 +1,6 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 
 export default defineConfig(({ command }) => {
   const aspNetCoreHttpsPort = process.env.ASPNETCORE_HTTPS_PORT;
@@ -32,6 +33,21 @@ export default defineConfig(({ command }) => {
     test: {
       environment: 'jsdom',
       globals: true,
+      projects: [
+        {
+          extends: true,
+          plugins: [storybookTest({ configDir: '.storybook' })],
+          test: {
+            name: 'storybook',
+            browser: {
+              enabled: true,
+              headless: true,
+              provider: 'playwright',
+              instances: [{ browser: 'chromium' }],
+            },
+          },
+        },
+      ],
     },
-  }
-})
+  };
+});

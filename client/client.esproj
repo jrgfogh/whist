@@ -1,16 +1,19 @@
 <Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.6311650">
   <PropertyGroup>
-	<StartupCommand>npm run dev</StartupCommand>
-	<JavaScriptTestRoot>src\</JavaScriptTestRoot>
-	<JavaScriptTestFramework>Vitest</JavaScriptTestFramework>
-	<!-- Allows the build (or compile) script to run on Build -->
-	<ShouldRunBuildScript>false</ShouldRunBuildScript>
-	<!-- Folder where production build output is generated -->
-	<BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
+    <StartupCommand>npm run dev</StartupCommand>
+    <JavaScriptTestRoot>src\</JavaScriptTestRoot>
+    <JavaScriptTestFramework>Vitest</JavaScriptTestFramework>
+    <!-- Allows the build (or compile) script to run on Build -->
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+    <!-- Folder where production build output is generated -->
+    <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-	<!-- Files/folders that should not be shown in Solution Explorer or scanned by the JS project system -->
-	<None Include="node_modules\**" Exclude="node_modules\.package-lock.json" />
-	<Content Remove="node_modules\**" />
+    <!-- Files/folders that should not be shown in Solution Explorer or scanned by the JS project system -->
+    <None Include="node_modules\**" Exclude="node_modules\.package-lock.json" />
+    <Content Remove="node_modules\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".storybook\" />
   </ItemGroup>
 </Project>

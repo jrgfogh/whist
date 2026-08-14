@@ -40,7 +40,15 @@ jobs:
           path: client/dist
 
       - name: Test client
-        run: npm test
+        run: npm test -- --coverage
+
+      - name: Upload JS coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          file: client/coverage/lcov.info
+          flag-name: javascript
+          parallel: true
+          coveralls-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
   build-server:
     runs-on: ubuntu-latest
@@ -61,7 +69,35 @@ jobs:
         run: dotnet build --no-restore -c Release
 
       - name: Test
-        run: dotnet test --no-build -c Release --blame-hang-timeout 1m
+        run: dotnet test --no-build -c Release --blame-hang-timeout 1m --collect:"XPlat Code Coverage" --results-directory TestResults
+
+      - name: Find coverage files
+        id: coverage
+        run: |
+          FILES=$(find TestResults -name "coverage.cobertura.xml" | tr '\n' ' ')
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+
+      - name: Upload .NET coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          files: ${{ steps.coverage.outputs.files }}
+          format: cobertura
+          flag-name: dotnet
+          parallel: true
+          coveralls-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
+
+  coveralls-finish:
+    needs:
+      - build-client
+      - build-server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Finalize Coveralls parallel build
+        uses: coverallsapp/github-action@v2
+        with:
+          parallel-finished: true
+          coverage-threshold: 20
+          coveralls-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
   build-container:
     runs-on: ubuntu-latest

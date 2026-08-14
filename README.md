@@ -1,6 +1,7 @@
 # whist
 [![Build Status](https://github.com/jrgfogh/whist/actions/workflows/ci.yml/badge.svg)](https://github.com/jrgfogh/whist/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/jrgfogh/whist/actions/workflows/codeql.yml/badge.svg)](https://github.com/jrgfogh/whist/actions/workflows/codeql.yml)
+[![Coverage Status](https://coveralls.io/repos/github/jrgfogh/whist/badge.svg?branch=master)](https://coveralls.io/github/jrgfogh/whist?branch=master)
 
 ***NOTE: The game is not finished and not even playable at the moment.***
 

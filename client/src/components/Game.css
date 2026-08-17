@@ -25,7 +25,9 @@
     top: 15%;
     left: 10%;
     border-radius: 20px;
-    background-color: lightgreen;
+    border: 2px solid black;
+    padding: 25px;
+    background-color: white;
 }
 
 .game-background {
@@ -53,7 +55,7 @@
     left: 50%;
     -webkit-transform: translateX(-50%);
     transform: translateX(-50%);
-    background-color: lightgreen;
+    background-color: white;
 }
 
 .hand .card-l1 {

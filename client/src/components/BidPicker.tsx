@@ -23,7 +23,7 @@ export function BidPicker(props: BidPickerProps) {
   }
 
   function button(bid: string) {
-    return <td key={bid}><button type="button"
+    return <td key={bid}><button type="button" className="btn btn-primary"
       disabled={!props.state.endsWith("choosing-bid")} onClick={sendBid(bid)}>Bid!</button></td>;
   }
 

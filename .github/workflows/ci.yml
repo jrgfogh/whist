@@ -69,7 +69,9 @@ jobs:
         run: dotnet build --no-restore -c Release
 
       - name: Test
-        run: dotnet test --no-build -c Release --blame-hang-timeout 1m --collect:"XPlat Code Coverage" --results-directory TestResults
+        run: |
+          dotnet test Whist.Rules.Tests/Whist.Rules.Tests.csproj --no-build -c Release --blame-hang-timeout 1m --collect:"XPlat Code Coverage" --results-directory TestResults
+          dotnet test Whist.Server.Tests/Whist.Server.Tests.csproj --no-build -c Release --blame-hang-timeout 1m --collect:"XPlat Code Coverage" --settings Whist.Server.Tests/coverlet.runsettings --results-directory TestResults
 
       - name: Find coverage files
         id: coverage

@@ -46,9 +46,9 @@ jobs:
         uses: coverallsapp/github-action@v2
         with:
           file: client/coverage/lcov.info
+          base-path: client
           flag-name: javascript
           parallel: true
-          coveralls-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
   build-server:
     runs-on: ubuntu-latest
@@ -69,22 +69,37 @@ jobs:
         run: dotnet build --no-restore -c Release
 
       - name: Test
-        run: dotnet test --no-build -c Release --blame-hang-timeout 1m --collect:"XPlat Code Coverage" --results-directory TestResults
+        run: |
+          dotnet test Whist.Rules.Tests/Whist.Rules.Tests.csproj --no-build -c Release --blame-hang-timeout 1m --collect:"XPlat Code Coverage" --results-directory TestResults/rules
+          dotnet test Whist.Server.Tests/Whist.Server.Tests.csproj --no-build -c Release --blame-hang-timeout 1m --collect:"XPlat Code Coverage" --results-directory TestResults/server
 
       - name: Find coverage files
         id: coverage
         run: |
-          FILES=$(find TestResults -name "coverage.cobertura.xml" | tr '\n' ' ')
-          echo "files=$FILES" >> $GITHUB_OUTPUT
+          RULES_FILE=$(find TestResults/rules -name "coverage.cobertura.xml" -print -quit)
+          SERVER_FILE=$(find TestResults/server -name "coverage.cobertura.xml" -print -quit)
+          test -n "$RULES_FILE"
+          test -n "$SERVER_FILE"
+          echo "rules_file=$RULES_FILE" >> "$GITHUB_OUTPUT"
+          echo "server_file=$SERVER_FILE" >> "$GITHUB_OUTPUT"
 
-      - name: Upload .NET coverage to Coveralls
+      - name: Upload rules coverage to Coveralls
         uses: coverallsapp/github-action@v2
         with:
-          files: ${{ steps.coverage.outputs.files }}
+          file: ${{ steps.coverage.outputs.rules_file }}
           format: cobertura
-          flag-name: dotnet
+          base-path: Whist.Rules
+          flag-name: dotnet-rules
           parallel: true
-          coveralls-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
+
+      - name: Upload server coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          file: ${{ steps.coverage.outputs.server_file }}
+          format: cobertura
+          base-path: .
+          flag-name: dotnet-server
+          parallel: true
 
   coveralls-finish:
     needs:
@@ -96,8 +111,6 @@ jobs:
         uses: coverallsapp/github-action@v2
         with:
           parallel-finished: true
-          coverage-threshold: 20
-          coveralls-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
   build-container:
     runs-on: ubuntu-latest

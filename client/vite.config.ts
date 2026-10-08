@@ -36,6 +36,7 @@ export default defineConfig(({ command }) => {
       globals: true,
       coverage: {
         provider: 'v8',
+        include: ['src/**/*'],
         reporter: ['lcov', 'text-summary'],
         thresholds: {
           lines: 20,
